@@ -83,11 +83,11 @@ func AllByName() ([]string, error) {
 	}
 	names := make([]string, 0, len(ids))
 	for _, id := range ids {
-		name, err := Name(id)
+		j, err := FindByID(id)
 		if err != nil {
 			return nil, err
 		}
-		names = append(names, name)
+		names = append(names, j.Name)
 	}
 	return names, nil
 }
