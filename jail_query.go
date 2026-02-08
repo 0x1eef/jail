@@ -53,34 +53,6 @@ func FindByID(jid int32) (*Jail, error) {
 	}, nil
 }
 
-// ID returns the JID of the corresponding jail.
-func ID(name string) (int32, error) {
-	params := NewParams()
-	params.Add("name", name)
-	jid := int32(0)
-	params.Add("jid", &jid)
-
-	if err := Get(params, 0); err != nil {
-		return -1, err
-	}
-
-	return jid, nil
-}
-
-// Name returns the name of the corresponding jail.
-func Name(id int32) (string, error) {
-	params := NewParams()
-	params.Add("jid", id)
-	name := make([]byte, ErrMsgLen)
-	params.Add("name", name)
-
-	if err := Get(params, 0); err != nil {
-		return "", err
-	}
-
-	return string(name), nil
-}
-
 // Returns all known jail IDs.
 func AllByID() ([]int32, error) {
 	var (
