@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/briandowns/jail"
+	"git.hardenedbsd.org/0x1eef/jail"
 )
 
 const (

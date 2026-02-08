@@ -1,4 +1,4 @@
-module github.com/briandowns/jail
+module git.hardenedbsd.org/0x1eef/jail
 
 go 1.25
 

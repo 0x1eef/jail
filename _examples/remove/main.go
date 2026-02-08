@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/briandowns/jail"
+	"git.hardenedbsd.org/0x1eef/jail"
 )
 
 func main() {
