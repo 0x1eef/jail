@@ -261,6 +261,7 @@ func Name(id int32) (string, error) {
 // TODO(briandowns) add more as they are identified.
 var validParams = []string{
 	"jid",
+	"lastjid",
 	"name",
 	"dying",
 	"persist",
@@ -419,26 +420,26 @@ func getSet(call int, iov []unix.Iovec, keep []interface{}, flags uintptr) error
 		case sysJailGet:
 			switch int(e1) {
 			case ErrJailGetFaultOutsideOfAllocatedSpace:
-				return fmt.Errorf("fault outside of allocated space: %d", e1)
+				return fmt.Errorf("fault outside of allocated space: %w", e1)
 			case enoent:
-				return fmt.Errorf("jail referred to either does not exist or is inaccessible: %d", e1)
+				return fmt.Errorf("jail referred to either does not exist or is inaccessible: %w", e1)
 			case einval:
-				return fmt.Errorf("invalid param provided: %d", e1)
+				return fmt.Errorf("invalid param provided: %w", e1)
 			}
 		case sysJailSet:
 			switch int(e1) {
 			case eperm:
-				return fmt.Errorf("not allowed or restricted: %d", e1)
+				return fmt.Errorf("not allowed or restricted: %w", e1)
 			case ErrJailSetFaultOutsideOfAllocatedSpace:
-				return fmt.Errorf("fault outside of allocated space: %d", e1)
+				return fmt.Errorf("fault outside of allocated space: %w", e1)
 			case ErrJailSetParamNotExist, ErrJailSetParamWrongSize:
-				return fmt.Errorf("invalid param provided: %d", e1)
+				return fmt.Errorf("invalid param provided: %w", e1)
 			case ErrJailSetUpdateFlagNotSet:
-				return fmt.Errorf("set update flag not set: %d", e1)
+				return fmt.Errorf("set update flag not set: %w", e1)
 			case ErrJailSetNameTooLong:
-				return fmt.Errorf("set name too long: %d", e1)
+				return fmt.Errorf("set name too long: %w", e1)
 			case ErrJailSetNoIDsLeft:
-				return fmt.Errorf("no JID's left: %d", e1)
+				return fmt.Errorf("no JID's left: %w", e1)
 			}
 		}
 	}
@@ -455,6 +456,45 @@ func Attach(jailID int32) error {
 // Remove receives a jail ID and attempts to remove the associated jail.
 func Remove(jailID int32) error {
 	return attachRemove(sysJailRemove, jailID)
+}
+
+// Returns all known jail IDs.
+func AllByID() ([]int32, error) {
+	var (
+		jids    []int32
+		jid     int32 = 0
+		lastjid int32 = 0
+	)
+	for {
+		params := NewParams()
+		params.Add("jid", &jid)
+		params.Add("lastjid", &lastjid)
+		if err := Get(params, 0); err != nil {
+			if errors.Is(err, unix.ENOENT) {
+				return jids, nil
+			}
+			return jids, err
+		}
+		jids = append(jids, jid)
+		lastjid = jid
+	}
+}
+
+// Returns all known jail names.
+func AllByName() ([]string, error) {
+	ids, err := AllByID()
+	names := make([]string, 0, len(ids))
+	if err != nil {
+		return nil, err
+	}
+	for _, id := range ids {
+		if name, err := Name(id); err != nil {
+			return nil, err
+		} else {
+			names = append(names, name)
+		}
+	}
+	return names, nil
 }
 
 // attachRemove
