@@ -40,7 +40,7 @@ func TestOpts_validate(t *testing.T) {
 	}
 }
 
-func TestCreate(t *testing.T) {
+func TestJail(t *testing.T) {
 	type args struct {
 		o *Opts
 	}
@@ -54,13 +54,13 @@ func TestCreate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := Create(tt.args.o)
+			got, err := Jail(tt.args.o)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Create() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Jail() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
-				t.Errorf("Create() = %v, want %v", got, tt.want)
+				t.Errorf("Jail() = %v, want %v", got, tt.want)
 			}
 		})
 	}

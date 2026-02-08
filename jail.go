@@ -32,7 +32,6 @@
 package jail
 
 import (
-	"bytes"
 	"encoding/binary"
 	"errors"
 	"fmt"
@@ -149,43 +148,8 @@ func (o *Opts) validate() error {
 	return nil
 }
 
-type Jail struct {
-	Name        string `json:"name"`
-	Path        string `json:"path"`
-	ID          int32 `json:"id"`
-	SecureLevel int32 `json:"securelevel"`
-	Parent      int32 `json:"parent"`
-}
-
-// Find a jail by ID.
-func FindByID(jid int32) (*Jail, error) {
-	var (
-		name        = make([]byte, 1024)
-		path        = make([]byte, 1024)
-		secureLevel int32
-		parent      int32
-	)
-	params := NewParams()
-	params.Add("jid", jid)
-	params.Add("name", name)
-	params.Add("path", path)
-	params.Add("securelevel", &secureLevel)
-	params.Add("parent", &parent)
-	if err := Get(params, 0); err != nil {
-		return nil, err
-	} else {
-		return &Jail{
-			ID: jid,
-			Name: string(bytes.Trim(name, "\x00")),
-			Path: string(bytes.Trim(path, "\x00")),
-			SecureLevel: secureLevel,
-			Parent: parent,
-		}, nil
-	}
-}
-
-// Create takes the given parameters, validates, and creates a new jail.
-func Create(o *Opts) (int32, error) {
+// Jail takes the given parameters, validates, and creates a new jail.
+func Jail(o *Opts) (int32, error) {
 	if err := o.validate(); err != nil {
 		return 0, err
 	}
@@ -292,6 +256,29 @@ func Name(id int32) (string, error) {
 	return string(name), nil
 }
 
+// validParams contains a list of the valid parameters that
+// are allowed to be used when calling the Set or Get functions.
+// TODO(briandowns) add more as they are identified.
+var validParams = []string{
+	"jid",
+	"lastjid",
+	"name",
+	"dying",
+	"persist",
+	"nopersist",
+}
+
+// isValidParam verifies that the given parameter is valid.
+func isValidParam(param string) bool {
+	for _, p := range validParams {
+		if param == p {
+			return true
+		}
+	}
+
+	return false
+}
+
 // Params contains the individual settings passed in to either get
 // or set a jail.
 type Params map[string]interface{}
@@ -306,6 +293,10 @@ func NewParams() Params {
 func (p Params) Add(k string, v interface{}) error {
 	if p == nil {
 		return errors.New("cannot assign values to nil map")
+	}
+
+	if !isValidParam(k) {
+		return errors.New("invalid parameter: " + k)
 	}
 
 	if _, ok := p[k]; !ok {

@@ -19,7 +19,7 @@ func main() {
 	}
 	var j int32
 	go func(jid *int32) {
-		jailID, err := jail.Create(o)
+		jailID, err := jail.Jail(o)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
