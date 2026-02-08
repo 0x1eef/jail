@@ -22,16 +22,16 @@ var (
 )
 
 func main() {
+	var (
+		jails []*jail.Jail
+		err   error
+	)
 	if help {
 		usage()
 	}
 	if check && jid == -1 {
 		fatalf("jls: -j jail to check must be provided for -c")
 	}
-	var (
-		jails []*jail.Jail
-		err   error
-	)
 	if dying {
 		jails, err = jail.All()
 	} else {
@@ -59,15 +59,15 @@ func main() {
 	}
 }
 
-func printf(str string, fmts ...any) {
+func printf(str string, args ...any) {
 	if !check {
-		fmt.Printf(str, fmts...)
+		fmt.Printf(str, args...)
 	}
 }
 
-func fatalf(str string, fmts ...any) {
+func fatalf(str string, args ...any) {
 	if !check {
-		log.Fatalf(str, fmts...)
+		log.Fatalf(str, args...)
 	}
 }
 
