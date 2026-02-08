@@ -152,9 +152,12 @@ func (o *Opts) validate() error {
 type Jail struct {
 	Name        string `json:"name"`
 	Path        string `json:"path"`
-	ID          int32 `json:"id"`
-	SecureLevel int32 `json:"securelevel"`
-	Parent      int32 `json:"parent"`
+	Hostname    string `json:"hostname"`
+	OSRelease   string `json:"osrelease"`
+	OSRelDate   int32  `json:"osreldate"`
+	ID          int32  `json:"id"`
+	SecureLevel int32  `json:"securelevel"`
+	Parent      int32  `json:"parent"`
 }
 
 // Find a jail by ID.
@@ -162,6 +165,9 @@ func FindByID(jid int32) (*Jail, error) {
 	var (
 		name        = make([]byte, 1024)
 		path        = make([]byte, 1024)
+		hostname    = make([]byte, 1024)
+		osrelease   = make([]byte, 1024)
+		osreldate   int32
 		secureLevel int32
 		parent      int32
 	)
@@ -169,17 +175,23 @@ func FindByID(jid int32) (*Jail, error) {
 	params.Add("jid", jid)
 	params.Add("name", name)
 	params.Add("path", path)
+	params.Add("host.hostname", hostname)
+	params.Add("osrelease", osrelease)
+	params.Add("osreldate", &osreldate)
 	params.Add("securelevel", &secureLevel)
 	params.Add("parent", &parent)
 	if err := Get(params, 0); err != nil {
 		return nil, err
 	} else {
 		return &Jail{
-			ID: jid,
-			Name: string(bytes.Trim(name, "\x00")),
-			Path: string(bytes.Trim(path, "\x00")),
+			ID:          jid,
+			Name:        string(bytes.Trim(name, "\x00")),
+			Path:        string(bytes.Trim(path, "\x00")),
+			Hostname:    string(bytes.Trim(hostname, "\x00")),
+			OSRelease:   string(bytes.Trim(osrelease, "\x00")),
+			OSRelDate:   osreldate,
 			SecureLevel: secureLevel,
-			Parent: parent,
+			Parent:      parent,
 		}, nil
 	}
 }
