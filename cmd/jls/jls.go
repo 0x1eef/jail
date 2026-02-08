@@ -25,7 +25,7 @@ func main() {
 	}
 	jails, err := jail.All()
 	if err != nil {
-		log.Fatalf("jls: %s", err)
+		fatalf("jls: %s", err)
 	}
 	printf(header, "JID", "IP Address", "Hostname", "Path")
 	match := false
