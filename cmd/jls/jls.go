@@ -18,9 +18,13 @@ var (
 	jid   int
 	check bool
 	dying bool
+	help  bool
 )
 
 func main() {
+	if help {
+		usage()
+	}
 	if check && jid == -1 {
 		fatalf("jls: -j jail to check must be provided for -c")
 	}
@@ -67,10 +71,17 @@ func fatalf(str string, fmts ...any) {
 	}
 }
 
+func usage() {
+	printf("Usage: jls [options]\n")
+	flag.PrintDefaults()
+	os.Exit(1)
+}
+
 func init() {
 	log.SetFlags(0)
-	flag.IntVar(&jid, "j", -1, "jail")
-	flag.BoolVar(&check, "c", false, "check")
-	flag.BoolVar(&dying, "d", false, "dying")
+	flag.IntVar(&jid, "j", -1, "The jid of the jail to list")
+	flag.BoolVar(&check, "c", false, "Only check for the jail's existence")
+	flag.BoolVar(&dying, "d", false, "List dying as well as active jails")
+	flag.BoolVar(&help, "h", false, "Show help")
 	flag.Parse()
 }
