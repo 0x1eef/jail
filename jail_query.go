@@ -16,6 +16,7 @@ func FindByID(jid int32) (*Jail, error) {
 		hostname         = make([]byte, 1024)
 		osrelease        = make([]byte, 1024)
 		vnet             int32
+		enforceStatFS    int32
 		osreldate        int32
 		secureLevel      int32
 		parent           int32
@@ -33,6 +34,7 @@ func FindByID(jid int32) (*Jail, error) {
 	params.Add("name", name)
 	params.Add("path", path)
 	params.Add("vnet", &vnet)
+	params.Add("enforce_statfs", &enforceStatFS)
 	params.Add("host.hostname", hostname)
 	params.Add("osrelease", osrelease)
 	params.Add("osreldate", &osreldate)
@@ -50,17 +52,18 @@ func FindByID(jid int32) (*Jail, error) {
 		return nil, err
 	}
 	return &Jail{
-		ID:          jid,
-		Name:        string(bytes.Trim(name, null)),
-		Path:        string(bytes.Trim(path, null)),
-		Hostname:    string(bytes.Trim(hostname, null)),
-		OSRelease:   string(bytes.Trim(osrelease, null)),
-		Vnet:        vnet == 1,
-		OSRelDate:   osreldate,
-		SecureLevel: secureLevel,
-		Parent:      parent,
-		Dying:       dying == 1,
-		Persist:     persist == 1,
+		ID:            jid,
+		Name:          string(bytes.Trim(name, null)),
+		Path:          string(bytes.Trim(path, null)),
+		Hostname:      string(bytes.Trim(hostname, null)),
+		OSRelease:     string(bytes.Trim(osrelease, null)),
+		Vnet:          vnet == 1,
+		EnforceStatFS: enforceStatFS,
+		OSRelDate:     osreldate,
+		SecureLevel:   secureLevel,
+		Parent:        parent,
+		Dying:         dying == 1,
+		Persist:       persist == 1,
 		Perms: Perms{
 			AllowSetHostname:   canSetHostname == 1,
 			AllowExtattr:       canExtattr == 1,

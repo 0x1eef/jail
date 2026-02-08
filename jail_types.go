@@ -1,18 +1,19 @@
 package jail
 
 type Jail struct {
-	Name        string `json:"name"`
-	Path        string `json:"path"`
-	Hostname    string `json:"hostname"`
-	OSRelease   string `json:"osrelease"`
-	OSRelDate   int32  `json:"osreldate"`
-	ID          int32  `json:"id"`
-	SecureLevel int32  `json:"securelevel"`
-	Parent      int32  `json:"parent"`
-	Vnet        bool   `json:"vnet"`
-	Dying       bool   `json:"dying"`
-	Persist     bool   `json:"persist"`
-	Perms       Perms  `json:"perms"`
+	Name          string `json:"name"`
+	Path          string `json:"path"`
+	Hostname      string `json:"hostname"`
+	OSRelease     string `json:"osrelease"`
+	OSRelDate     int32  `json:"osreldate"`
+	ID            int32  `json:"id"`
+	SecureLevel   int32  `json:"securelevel"`
+	Parent        int32  `json:"parent"`
+	EnforceStatFS int32  `json:"enforce_statfs"`
+	Vnet          bool   `json:"vnet"`
+	Dying         bool   `json:"dying"`
+	Persist       bool   `json:"persist"`
+	Perms         Perms  `json:"perms"`
 }
 
 type Perms struct {
