@@ -10,17 +10,18 @@ import (
 // Find a jail by ID.
 func FindByID(jid int32) (*Jail, error) {
 	var (
-		null           = "\x00"
-		name           = make([]byte, 1024)
-		path           = make([]byte, 1024)
-		hostname       = make([]byte, 1024)
-		osrelease      = make([]byte, 1024)
-		osreldate      int32
-		secureLevel    int32
-		parent         int32
-		dying          int32
-		persist        int32
-		canSetHostname int32
+		null             = "\x00"
+		name             = make([]byte, 1024)
+		path             = make([]byte, 1024)
+		hostname         = make([]byte, 1024)
+		osrelease        = make([]byte, 1024)
+		osreldate        int32
+		secureLevel      int32
+		parent           int32
+		dying            int32
+		persist          int32
+		canSetHostname   int32
+		canReservedPorts int32
 	)
 	params := NewParams()
 	params.Add("jid", jid)
@@ -34,6 +35,7 @@ func FindByID(jid int32) (*Jail, error) {
 	params.Add("dying", &dying)
 	params.Add("persist", &persist)
 	params.Add("allow.set_hostname", &canSetHostname)
+	params.Add("allow.reserved_ports", &canReservedPorts)
 	if err := Get(params, 0); err != nil {
 		return nil, err
 	}
@@ -48,7 +50,10 @@ func FindByID(jid int32) (*Jail, error) {
 		Parent:      parent,
 		Dying:       dying == 1,
 		Persist:     persist == 1,
-		Perms:       Perms{AllowSetHostname: canSetHostname == 1},
+		Perms: Perms{
+			AllowSetHostname:   canSetHostname == 1,
+			AllowReservedPorts: canReservedPorts == 1,
+		},
 	}, nil
 }
 
