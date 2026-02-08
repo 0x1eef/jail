@@ -18,6 +18,7 @@ type Perms struct {
 	AllowSetHostname   bool `json:"set_hostname"`
 	AllowExtattr       bool `json:"extattr"`
 	AllowReservedPorts bool `json:"reserved_ports"`
+	AllowSetTime       bool `json:"settime"`
 }
 
 // Allow sethostname(3) in a jail
@@ -49,6 +50,22 @@ func (j *Jail) DenyExtattr() error {
 	params := NewParams()
 	params.Add("jid", j.ID)
 	params.Add("allow.noextattr", int32(1))
+	return Set(params, UpdateFlag)
+}
+
+// Allow setting global system time (eg via date(1))
+func (j *Jail) AllowSetTime() error {
+	params := NewParams()
+	params.Add("jid", j.ID)
+	params.Add("allow.settime", int32(1))
+	return Set(params, UpdateFlag)
+}
+
+// Deny setting global system time
+func (j *Jail) DenySetTime() error {
+	params := NewParams()
+	params.Add("jid", j.ID)
+	params.Add("allow.nosettime", int32(1))
 	return Set(params, UpdateFlag)
 }
 
