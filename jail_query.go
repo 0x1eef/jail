@@ -17,6 +17,7 @@ type Jail struct {
 	SecureLevel int32  `json:"securelevel"`
 	Parent      int32  `json:"parent"`
 	Dying       bool   `json:"dying"`
+	Persist     bool   `json:"persist"`
 }
 
 // Find a jail by ID.
@@ -30,6 +31,7 @@ func FindByID(jid int32) (*Jail, error) {
 		secureLevel int32
 		parent      int32
 		dying       int32
+		persist     int32
 	)
 	params := NewParams()
 	params.Add("jid", jid)
@@ -41,6 +43,7 @@ func FindByID(jid int32) (*Jail, error) {
 	params.Add("securelevel", &secureLevel)
 	params.Add("parent", &parent)
 	params.Add("dying", &dying)
+	params.Add("persist", &persist)
 	if err := Get(params, 0); err != nil {
 		return nil, err
 	}
@@ -54,6 +57,7 @@ func FindByID(jid int32) (*Jail, error) {
 		SecureLevel: secureLevel,
 		Parent:      parent,
 		Dying:       dying == 1,
+		Persist:     persist == 1,
 	}, nil
 }
 
