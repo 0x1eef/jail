@@ -16,12 +16,12 @@ type Jail struct {
 }
 
 type Perms struct {
-	AllowSetHostname   bool `json:"set_hostname"`
-	AllowExtattr       bool `json:"extattr"`
-	AllowReservedPorts bool `json:"reserved_ports"`
-	AllowSetTime       bool `json:"settime"`
-	AllowRoot          bool `json:"suser"`
-	AllowChflags       bool `json:"chflags"`
+	AllowSetHostname   bool `json:"allow_sethostname"`
+	AllowExtattr       bool `json:"allow_extattr"`
+	AllowReservedPorts bool `json:"allow_reservedports"`
+	AllowSetTime       bool `json:"allow_settime"`
+	AllowRoot          bool `json:"allow_suser"`
+	AllowChflags       bool `json:"allow_chflags"`
 }
 
 // Allow sethostname(3) in a jail
