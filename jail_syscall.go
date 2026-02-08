@@ -50,38 +50,42 @@ const jailAPIVersion uint32 = 2
 // for the system.
 const MaxChildJails int64 = 999999
 
-// getSet performs the given syscall with the params and flags provided.
-func getSet(call int, iov []unix.Iovec, keep []interface{}, flags uintptr) error {
-	_, _, e1 := unix.Syscall(uintptr(call), uintptr(unsafe.Pointer(&iov[0])), uintptr(len(iov)), flags)
+// jail_get(2) system call
+func get(iov []unix.Iovec, keep []interface{}, flags uintptr) error {
+	_, _, e1 := unix.Syscall(uintptr(sysJailGet), uintptr(unsafe.Pointer(&iov[0])), uintptr(len(iov)), flags)
 	runtime.KeepAlive(keep)
 	if e1 != 0 {
-		switch call {
-		case sysJailGet:
-			switch int(e1) {
-			case ErrJailGetFaultOutsideOfAllocatedSpace:
-				return fmt.Errorf("fault outside of allocated space: %w", e1)
-			case enoent:
-				return fmt.Errorf("jail referred to either does not exist or is inaccessible: %w", e1)
-			case einval:
-				return fmt.Errorf("invalid param provided: %w", e1)
-			}
-		case sysJailSet:
-			switch int(e1) {
-			case eperm:
-				return fmt.Errorf("not allowed or restricted: %w", e1)
-			case ErrJailSetFaultOutsideOfAllocatedSpace:
-				return fmt.Errorf("fault outside of allocated space: %w", e1)
-			case ErrJailSetParamNotExist, ErrJailSetParamWrongSize:
-				return fmt.Errorf("invalid param provided: %w", e1)
-			case ErrJailSetUpdateFlagNotSet:
-				return fmt.Errorf("set update flag not set: %w", e1)
-			case ErrJailSetNameTooLong:
-				return fmt.Errorf("set name too long: %w", e1)
-			case ErrJailSetNoIDsLeft:
-				return fmt.Errorf("no JID's left: %w", e1)
-			}
+		switch int(e1) {
+		case ErrJailGetFaultOutsideOfAllocatedSpace:
+			return fmt.Errorf("fault outside of allocated space: %w", e1)
+		case enoent:
+			return fmt.Errorf("jail referred to either does not exist or is inaccessible: %w", e1)
+		case einval:
+			return fmt.Errorf("invalid param provided: %w", e1)
 		}
 	}
+	return nil
+}
 
+// jail_set(2) system call
+func set(iov []unix.Iovec, keep []interface{}, flags uintptr) error {
+	_, _, e1 := unix.Syscall(uintptr(sysJailSet), uintptr(unsafe.Pointer(&iov[0])), uintptr(len(iov)), flags)
+	runtime.KeepAlive(keep)
+	if e1 != 0 {
+		switch int(e1) {
+		case eperm:
+			return fmt.Errorf("not allowed or restricted: %w", e1)
+		case ErrJailSetFaultOutsideOfAllocatedSpace:
+			return fmt.Errorf("fault outside of allocated space: %w", e1)
+		case ErrJailSetParamNotExist, ErrJailSetParamWrongSize:
+			return fmt.Errorf("invalid param provided: %w", e1)
+		case ErrJailSetUpdateFlagNotSet:
+			return fmt.Errorf("set update flag not set: %w", e1)
+		case ErrJailSetNameTooLong:
+			return fmt.Errorf("set name too long: %w", e1)
+		case ErrJailSetNoIDsLeft:
+			return fmt.Errorf("no JID's left: %w", e1)
+		}
+	}
 	return nil
 }

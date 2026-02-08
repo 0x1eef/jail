@@ -7,8 +7,7 @@ func Set(params Params, flags uintptr) error {
 	if err != nil {
 		return err
 	}
-
-	return getSet(sysJailSet, iov, keep, flags)
+	return set(iov, keep, flags)
 }
 
 // Get retrieves a matching jail based on the provided params.
@@ -17,6 +16,5 @@ func Get(params Params, flags uintptr) error {
 	if err != nil {
 		return err
 	}
-
-	return getSet(sysJailGet, iov, keep, flags)
+	return get(iov, keep, flags)
 }
