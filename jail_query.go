@@ -53,6 +53,23 @@ func FindByID(jid int32) (*Jail, error) {
 	}, nil
 }
 
+// Returns all known jails.
+func All() ([]*Jail, error) {
+	if ids, err := AllByID(); err != nil {
+		return nil, err
+	} else {
+		jails := make([]*Jail, 0, len(ids))
+		for _, id := range ids {
+			if j, err := FindByID(id); err != nil {
+				return nil, err
+			} else {
+				jails = append(jails, j)
+			}
+		}
+		return jails, nil
+	}
+}
+
 // Returns all known jail IDs.
 func AllByID() ([]int32, error) {
 	var (
