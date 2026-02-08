@@ -17,13 +17,22 @@ const (
 var (
 	jid   int
 	check bool
+	dying bool
 )
 
 func main() {
 	if check && jid == -1 {
 		fatalf("jls: -j jail to check must be provided for -c")
 	}
-	jails, err := jail.All()
+	var (
+		jails []*jail.Jail
+		err   error
+	)
+	if dying {
+		jails, err = jail.All()
+	} else {
+		jails, err = jail.Living()
+	}
 	if err != nil {
 		fatalf("jls: %s", err)
 	}
@@ -62,5 +71,6 @@ func init() {
 	log.SetFlags(0)
 	flag.IntVar(&jid, "j", -1, "jail")
 	flag.BoolVar(&check, "c", false, "check")
+	flag.BoolVar(&dying, "d", false, "dying")
 	flag.Parse()
 }
