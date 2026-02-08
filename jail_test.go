@@ -167,7 +167,8 @@ func TestGet(t *testing.T) {
 func Test_getSet(t *testing.T) {
 	type args struct {
 		call  int
-		iov   unix.Iovec
+		iov   []unix.Iovec
+		keep  []interface{}
 		flags uintptr
 	}
 	tests := []struct {
@@ -179,7 +180,7 @@ func Test_getSet(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := getSet(tt.args.call, tt.args.iov, tt.args.flags); (err != nil) != tt.wantErr {
+			if err := getSet(tt.args.call, tt.args.iov, tt.args.keep, tt.args.flags); (err != nil) != tt.wantErr {
 				t.Errorf("getSet() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

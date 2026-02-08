@@ -38,6 +38,7 @@ import (
 	"net"
 	"os"
 	"reflect"
+	"runtime"
 	"unsafe"
 
 	"golang.org/x/sys/unix"
@@ -231,24 +232,28 @@ func (j *jail) Clone() (int, error) {
 func ID(name string) (int32, error) {
 	params := NewParams()
 	params.Add("name", name)
+	jid := int32(0)
+	params.Add("jid", &jid)
 
 	if err := Get(params, 0); err != nil {
 		return -1, err
 	}
 
-	return params["jid"].(int32), nil
+	return jid, nil
 }
 
 // Name returns the name of the corresponding jail.
 func Name(id int32) (string, error) {
 	params := NewParams()
 	params.Add("jid", id)
+	name := make([]byte, ErrMsgLen)
+	params.Add("name", name)
 
 	if err := Get(params, 0); err != nil {
 		return "", err
 	}
 
-	return params["name"].(string), nil
+	return string(name), nil
 }
 
 // validParams contains a list of the valid parameters that
@@ -310,65 +315,105 @@ func (p Params) Validate() error {
 
 // buildIovec takes the containing map value and builds
 // out a slice of syscall.Iovec.
-func (p Params) buildIovec() ([]unix.Iovec, error) {
-	iovec := make([]unix.Iovec, len(p))
-	var itr int
-
+func (p Params) buildIovec() ([]unix.Iovec, []interface{}, error) {
+	iovec := make([]unix.Iovec, 0, len(p)*2)
+	keep := make([]interface{}, 0, len(p)*2)
 	for k, v := range p {
-		ib, err := unix.BytePtrFromString(k)
+		kb := append([]byte(k), 0)
+		iovec = append(iovec, unix.Iovec{
+			Base: &kb[0],
+			Len:  uint64(len(kb)),
+		})
+		keep = append(keep, kb)
+		base, size, keepv, err := p.encodeParamValue(v)
 		if err != nil {
-			return nil, err
+			return nil, nil, errors.New("invalid value passed in for key: " + k)
 		}
-
-		rv := reflect.ValueOf(v)
-		var size uint64
-
-		switch rv.Kind() {
-		case reflect.String:
-			s := string(rv.String())
-			size = uint64(unsafe.Sizeof(s))
-		case reflect.Int, reflect.Int8, reflect.Int16,
-			reflect.Int32, reflect.Int64, reflect.Bool:
-			size = uint64(unsafe.Sizeof(rv.UnsafeAddr()))
-		default:
-			return nil, errors.New("invalid value passed in for key: " + k)
-		}
-
-		iovec[itr] = unix.Iovec{
-			Base: ib,
+		keep = append(keep, keepv)
+		iovec = append(iovec, unix.Iovec{
+			Base: base,
 			Len:  size,
-		}
-
-		itr++
+		})
 	}
+	return iovec, keep, nil
+}
 
-	return iovec, nil
+func (p Params) encodeParamValue(v interface{}) (*byte, uint64, interface{}, error) {
+	switch vv := v.(type) {
+	case []byte:
+		if len(vv) == 0 {
+			return nil, 0, nil, errors.New("invalid value")
+		}
+		return &vv[0], uint64(len(vv)), vv, nil
+	case string:
+		vb := append([]byte(vv), 0)
+		return &vb[0], uint64(len(vb)), vb, nil
+	default:
+		rv := reflect.ValueOf(v)
+		switch rv.Kind() {
+		case reflect.Ptr:
+			if rv.IsNil() {
+				return nil, 0, nil, errors.New("invalid value")
+			}
+			ev := rv.Elem()
+			switch ev.Kind() {
+			case reflect.Bool, reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+				return (*byte)(unsafe.Pointer(rv.Pointer())), uint64(ev.Type().Size()), v, nil
+			default:
+				return nil, 0, nil, errors.New("invalid value")
+			}
+		case reflect.Bool:
+			b := int32(0)
+			if rv.Bool() {
+				b = 1
+			}
+			return (*byte)(unsafe.Pointer(&b)), uint64(unsafe.Sizeof(b)), &b, nil
+		case reflect.Int:
+			n := int(rv.Int())
+			return (*byte)(unsafe.Pointer(&n)), uint64(unsafe.Sizeof(n)), &n, nil
+		case reflect.Int8:
+			n := int8(rv.Int())
+			return (*byte)(unsafe.Pointer(&n)), uint64(unsafe.Sizeof(n)), &n, nil
+		case reflect.Int16:
+			n := int16(rv.Int())
+			return (*byte)(unsafe.Pointer(&n)), uint64(unsafe.Sizeof(n)), &n, nil
+		case reflect.Int32:
+			n := int32(rv.Int())
+			return (*byte)(unsafe.Pointer(&n)), uint64(unsafe.Sizeof(n)), &n, nil
+		case reflect.Int64:
+			n := int64(rv.Int())
+			return (*byte)(unsafe.Pointer(&n)), uint64(unsafe.Sizeof(n)), &n, nil
+		default:
+			return nil, 0, nil, errors.New("invalid value")
+		}
+	}
 }
 
 // Set creates	a new jail, or modifies	an existing
 // one, and optionally locks the current process in it.
 func Set(params Params, flags uintptr) error {
-	iov, err := params.buildIovec()
+	iov, keep, err := params.buildIovec()
 	if err != nil {
 		return err
 	}
 
-	return getSet(sysJailSet, iov[0], flags)
+	return getSet(sysJailSet, iov, keep, flags)
 }
 
 // Get retrieves a matching jail based on the provided params.
 func Get(params Params, flags uintptr) error {
-	iov, err := params.buildIovec()
+	iov, keep, err := params.buildIovec()
 	if err != nil {
 		return err
 	}
 
-	return getSet(sysJailGet, iov[0], flags)
+	return getSet(sysJailGet, iov, keep, flags)
 }
 
 // getSet performas the given syscall with the params and flags provided.
-func getSet(call int, iov unix.Iovec, flags uintptr) error {
-	_, _, e1 := unix.Syscall(uintptr(call), uintptr(unsafe.Pointer(&iov)), 0, flags)
+func getSet(call int, iov []unix.Iovec, keep []interface{}, flags uintptr) error {
+	_, _, e1 := unix.Syscall(uintptr(call), uintptr(unsafe.Pointer(&iov[0])), uintptr(len(iov)), flags)
+	runtime.KeepAlive(keep)
 	if e1 != 0 {
 		switch call {
 		case sysJailGet:
