@@ -19,6 +19,7 @@ type Perms struct {
 	AllowExtattr       bool `json:"extattr"`
 	AllowReservedPorts bool `json:"reserved_ports"`
 	AllowSetTime       bool `json:"settime"`
+	AllowRoot          bool `json:"suser"`
 }
 
 // Allow sethostname(3) in a jail
@@ -66,6 +67,22 @@ func (j *Jail) DenySetTime() error {
 	params := NewParams()
 	params.Add("jid", j.ID)
 	params.Add("allow.nosettime", int32(1))
+	return Set(params, UpdateFlag)
+}
+
+// Allow root to act as a superuser
+func (j *Jail) AllowRoot() error {
+	params := NewParams()
+	params.Add("jid", j.ID)
+	params.Add("allow.suser", int32(1))
+	return Set(params, UpdateFlag)
+}
+
+// Deny root to act as a superuser
+func (j *Jail) DenyRoot() error {
+	params := NewParams()
+	params.Add("jid", j.ID)
+	params.Add("allow.nosuser", int32(1))
 	return Set(params, UpdateFlag)
 }
 

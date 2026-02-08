@@ -23,6 +23,7 @@ func FindByID(jid int32) (*Jail, error) {
 		canSetHostname   int32
 		canExtattr       int32
 		canSetTime       int32
+		canRoot          int32
 		canReservedPorts int32
 	)
 	params := NewParams()
@@ -39,6 +40,7 @@ func FindByID(jid int32) (*Jail, error) {
 	params.Add("allow.set_hostname", &canSetHostname)
 	params.Add("allow.extattr", &canExtattr)
 	params.Add("allow.settime", &canSetTime)
+	params.Add("allow.suser", &canRoot)
 	params.Add("allow.reserved_ports", &canReservedPorts)
 	if err := Get(params, 0); err != nil {
 		return nil, err
@@ -58,6 +60,7 @@ func FindByID(jid int32) (*Jail, error) {
 			AllowSetHostname:   canSetHostname == 1,
 			AllowExtattr:       canExtattr == 1,
 			AllowSetTime:       canSetTime == 1,
+			AllowRoot:          canRoot == 1,
 			AllowReservedPorts: canReservedPorts == 1,
 		},
 	}, nil
