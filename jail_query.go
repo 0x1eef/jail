@@ -57,6 +57,16 @@ func FindByID(jid int32) (*Jail, error) {
 	}, nil
 }
 
+// Returns all living jails
+func Living() ([]*Jail, error) {
+	return filterByDying(false)
+}
+
+// Returns all dying jails
+func Dying() ([]*Jail, error) {
+	return filterByDying(true)
+}
+
 // Returns all known jails (both living and dying)
 func All() ([]*Jail, error) {
 	if ids, err := AllByID(); err != nil {
@@ -111,4 +121,19 @@ func AllByName() ([]string, error) {
 		names = append(names, j.Name)
 	}
 	return names, nil
+}
+
+// Filters jails on their dying status
+func filterByDying(dying bool) ([]*Jail, error) {
+	if jails, err := All(); err != nil {
+		return nil, err
+	} else {
+		slice := make([]*Jail, 0, len(jails))
+		for _, j := range jails {
+			if j.Dying == dying {
+				slice = append(slice, j)
+			}
+		}
+		return slice, nil
+	}
 }
