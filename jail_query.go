@@ -23,6 +23,7 @@ type Jail struct {
 // Find a jail by ID.
 func FindByID(jid int32) (*Jail, error) {
 	var (
+		null        = "\x00"
 		name        = make([]byte, 1024)
 		path        = make([]byte, 1024)
 		hostname    = make([]byte, 1024)
@@ -49,10 +50,10 @@ func FindByID(jid int32) (*Jail, error) {
 	}
 	return &Jail{
 		ID:          jid,
-		Name:        string(bytes.Trim(name, "\x00")),
-		Path:        string(bytes.Trim(path, "\x00")),
-		Hostname:    string(bytes.Trim(hostname, "\x00")),
-		OSRelease:   string(bytes.Trim(osrelease, "\x00")),
+		Name:        string(bytes.Trim(name, null)),
+		Path:        string(bytes.Trim(path, null)),
+		Hostname:    string(bytes.Trim(hostname, null)),
+		OSRelease:   string(bytes.Trim(osrelease, null)),
 		OSRelDate:   osreldate,
 		SecureLevel: secureLevel,
 		Parent:      parent,
