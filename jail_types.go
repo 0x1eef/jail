@@ -9,6 +9,7 @@ type Jail struct {
 	ID          int32  `json:"id"`
 	SecureLevel int32  `json:"securelevel"`
 	Parent      int32  `json:"parent"`
+	Vnet        bool   `json:"vnet"`
 	Dying       bool   `json:"dying"`
 	Persist     bool   `json:"persist"`
 	Perms       Perms  `json:"perms"`

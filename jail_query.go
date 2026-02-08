@@ -15,6 +15,7 @@ func FindByID(jid int32) (*Jail, error) {
 		path             = make([]byte, 1024)
 		hostname         = make([]byte, 1024)
 		osrelease        = make([]byte, 1024)
+		vnet             int32
 		osreldate        int32
 		secureLevel      int32
 		parent           int32
@@ -30,6 +31,7 @@ func FindByID(jid int32) (*Jail, error) {
 	params.Add("jid", jid)
 	params.Add("name", name)
 	params.Add("path", path)
+	params.Add("vnet", &vnet)
 	params.Add("host.hostname", hostname)
 	params.Add("osrelease", osrelease)
 	params.Add("osreldate", &osreldate)
@@ -51,6 +53,7 @@ func FindByID(jid int32) (*Jail, error) {
 		Path:        string(bytes.Trim(path, null)),
 		Hostname:    string(bytes.Trim(hostname, null)),
 		OSRelease:   string(bytes.Trim(osrelease, null)),
+		Vnet:        vnet == 1,
 		OSRelDate:   osreldate,
 		SecureLevel: secureLevel,
 		Parent:      parent,
