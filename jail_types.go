@@ -21,6 +21,7 @@ type Perms struct {
 	AllowReservedPorts bool `json:"reserved_ports"`
 	AllowSetTime       bool `json:"settime"`
 	AllowRoot          bool `json:"suser"`
+	AllowChflags       bool `json:"chflags"`
 }
 
 // Allow sethostname(3) in a jail
@@ -84,6 +85,22 @@ func (j *Jail) DenyRoot() error {
 	params := NewParams()
 	params.Add("jid", j.ID)
 	params.Add("allow.nosuser", int32(1))
+	return Set(params, UpdateFlag)
+}
+
+// Allow chflags(2) inside the jail
+func (j *Jail) AllowChflags() error {
+	params := NewParams()
+	params.Add("jid", j.ID)
+	params.Add("allow.chflags", int32(1))
+	return Set(params, UpdateFlag)
+}
+
+// Deny chflags(2) inside the jail
+func (j *Jail) DenyChflags() error {
+	params := NewParams()
+	params.Add("jid", j.ID)
+	params.Add("allow.nochflags", int32(1))
 	return Set(params, UpdateFlag)
 }
 
