@@ -18,7 +18,7 @@ func main() {
 		IP4:      "192.168.0.200",
 		Chdir:    true,
 	}
-	jid, err := jail.Jail(o)
+	jid, err := jail.Create(o)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
