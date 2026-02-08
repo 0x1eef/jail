@@ -16,6 +16,7 @@ type Jail struct {
 	ID          int32  `json:"id"`
 	SecureLevel int32  `json:"securelevel"`
 	Parent      int32  `json:"parent"`
+	Dying       bool   `json:"dying"`
 }
 
 // Find a jail by ID.
@@ -28,6 +29,7 @@ func FindByID(jid int32) (*Jail, error) {
 		osreldate   int32
 		secureLevel int32
 		parent      int32
+		dying       int32
 	)
 	params := NewParams()
 	params.Add("jid", jid)
@@ -38,6 +40,7 @@ func FindByID(jid int32) (*Jail, error) {
 	params.Add("osreldate", &osreldate)
 	params.Add("securelevel", &secureLevel)
 	params.Add("parent", &parent)
+	params.Add("dying", &dying)
 	if err := Get(params, 0); err != nil {
 		return nil, err
 	}
@@ -50,10 +53,11 @@ func FindByID(jid int32) (*Jail, error) {
 		OSRelDate:   osreldate,
 		SecureLevel: secureLevel,
 		Parent:      parent,
+		Dying:       dying == 1,
 	}, nil
 }
 
-// Returns all known jails.
+// Returns all known jails (both living and dying)
 func All() ([]*Jail, error) {
 	if ids, err := AllByID(); err != nil {
 		return nil, err
@@ -70,7 +74,7 @@ func All() ([]*Jail, error) {
 	}
 }
 
-// Returns all known jail IDs.
+// Returns all known jail IDs (both living and dying)
 func AllByID() ([]int32, error) {
 	var (
 		jids    []int32
@@ -92,7 +96,7 @@ func AllByID() ([]int32, error) {
 	}
 }
 
-// Returns all known jail names.
+// Returns all known jail names (both living and dying)
 func AllByName() ([]string, error) {
 	ids, err := AllByID()
 	if err != nil {
