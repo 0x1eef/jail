@@ -16,6 +16,7 @@ type Jail struct {
 
 type Perms struct {
 	AllowSetHostname   bool `json:"set_hostname"`
+	AllowExtattr       bool `json:"extattr"`
 	AllowReservedPorts bool `json:"reserved_ports"`
 }
 
@@ -32,6 +33,22 @@ func (j *Jail) DenySetHostname() error {
 	params := NewParams()
 	params.Add("jid", j.ID)
 	params.Add("allow.noset_hostname", int32(1))
+	return Set(params, UpdateFlag)
+}
+
+// Allow use of extended attributes
+func (j *Jail) AllowExtattr() error {
+	params := NewParams()
+	params.Add("jid", j.ID)
+	params.Add("allow.extattr", int32(1))
+	return Set(params, UpdateFlag)
+}
+
+// Deny use of extended attributes
+func (j *Jail) DenyExtattr() error {
+	params := NewParams()
+	params.Add("jid", j.ID)
+	params.Add("allow.noextattr", int32(1))
 	return Set(params, UpdateFlag)
 }
 
