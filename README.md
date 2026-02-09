@@ -41,7 +41,7 @@ func main() {
     for _, j := range jails {
       fmt.Printf("%s: %s\n", "name", j.Name)
       fmt.Printf("%s: %s\n", "path", j.Path)
-      fmt.Printf("%s: %s\n", "hostname", j.Hostname)
+      fmt.Printf("%s: %s\n\n", "hostname", j.Hostname)
     }
   }
 }
