@@ -22,6 +22,7 @@ func FindByID(jid int32) (*Jail, error) {
 		parent           int32
 		dying            int32
 		persist          int32
+		devfsRuleset     int32
 		canSetHostname   int32
 		canExtattr       int32
 		canSetTime       int32
@@ -42,6 +43,7 @@ func FindByID(jid int32) (*Jail, error) {
 	params.Add("parent", &parent)
 	params.Add("dying", &dying)
 	params.Add("persist", &persist)
+	params.Add("devfs_ruleset", &devfsRuleset)
 	params.Add("allow.set_hostname", &canSetHostname)
 	params.Add("allow.extattr", &canExtattr)
 	params.Add("allow.settime", &canSetTime)
@@ -62,6 +64,7 @@ func FindByID(jid int32) (*Jail, error) {
 		OSRelDate:     osreldate,
 		SecureLevel:   secureLevel,
 		Parent:        parent,
+		DevFSRuleset:  devfsRuleset,
 		Dying:         dying == 1,
 		Persist:       persist == 1,
 		Perms: Perms{

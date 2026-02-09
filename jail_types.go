@@ -10,6 +10,7 @@ type Jail struct {
 	SecureLevel   int32  `json:"securelevel"`
 	Parent        int32  `json:"parent"`
 	EnforceStatFS int32  `json:"enforce_statfs"`
+	DevFSRuleset  int32  `json:"devfs_ruleset"`
 	Vnet          bool   `json:"vnet"`
 	Dying         bool   `json:"dying"`
 	Persist       bool   `json:"persist"`
