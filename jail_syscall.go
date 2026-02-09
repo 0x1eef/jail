@@ -50,7 +50,25 @@ const jailAPIVersion uint32 = 2
 // for the system.
 const MaxChildJails int64 = 999999
 
-// jail_get(2) system call
+// jail_set(2) wrapper
+func Set(params Params, flags uintptr) error {
+	iov, keep, err := params.buildIovec()
+	if err != nil {
+		return err
+	}
+	return set(iov, keep, flags)
+}
+
+// jail_get(2) wrapper
+func Get(params Params, flags uintptr) error {
+	iov, keep, err := params.buildIovec()
+	if err != nil {
+		return err
+	}
+	return get(iov, keep, flags)
+}
+
+// jail_get(2)
 func get(iov []unix.Iovec, keep []interface{}, flags uintptr) error {
 	_, _, e1 := unix.Syscall(uintptr(sysJailGet), uintptr(unsafe.Pointer(&iov[0])), uintptr(len(iov)), flags)
 	runtime.KeepAlive(keep)
@@ -67,7 +85,7 @@ func get(iov []unix.Iovec, keep []interface{}, flags uintptr) error {
 	return nil
 }
 
-// jail_set(2) system call
+// jail_set(2)
 func set(iov []unix.Iovec, keep []interface{}, flags uintptr) error {
 	_, _, e1 := unix.Syscall(uintptr(sysJailSet), uintptr(unsafe.Pointer(&iov[0])), uintptr(len(iov)), flags)
 	runtime.KeepAlive(keep)
