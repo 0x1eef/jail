@@ -129,3 +129,11 @@ func (j *Jail) SetName(name string) error {
 	params.Add("name", name)
 	return Set(params, UpdateFlag)
 }
+
+// Set the jail hostname
+func (j *Jail) SetHostname(name string) error {
+	params := NewParams()
+	params.Add("jid", j.ID)
+	params.Add("host.hostname", name)
+	return Set(params, UpdateFlag)
+}
