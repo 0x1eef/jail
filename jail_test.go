@@ -136,7 +136,7 @@ func TestSet(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := Set(tt.args.params, tt.args.flags); (err != nil) != tt.wantErr {
+			if _, err := Set(tt.args.params, tt.args.flags); (err != nil) != tt.wantErr {
 				t.Errorf("Set() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -157,7 +157,7 @@ func TestGet(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := Get(tt.args.params, tt.args.flags); (err != nil) != tt.wantErr {
+			if _, err := Get(tt.args.params, tt.args.flags); (err != nil) != tt.wantErr {
 				t.Errorf("Get() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

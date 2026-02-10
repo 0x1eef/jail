@@ -50,7 +50,7 @@ func FindByID(jid int32) (*Jail, error) {
 	params.Add("allow.suser", &canRoot)
 	params.Add("allow.chflags", &canChflags)
 	params.Add("allow.reserved_ports", &canReservedPorts)
-	if err := Get(params, 0); err != nil {
+	if _, err := Get(params, 0); err != nil {
 		return nil, err
 	}
 	return &Jail{
@@ -116,7 +116,7 @@ func AllByID() ([]int32, error) {
 		params := NewParams()
 		params.Add("jid", &jid)
 		params.Add("lastjid", &lastjid)
-		if err := Get(params, 0); err != nil {
+		if _, err := Get(params, 0); err != nil {
 			if errors.Is(err, unix.ENOENT) {
 				return jids, nil
 			}
