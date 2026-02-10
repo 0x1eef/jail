@@ -121,3 +121,11 @@ func (j *Jail) DenyReservedPorts() error {
 	params.Add("allow.noreserved_ports", int32(1))
 	return Set(params, UpdateFlag)
 }
+
+// Set the jail name
+func (j *Jail) SetName(name string) error {
+	params := NewParams()
+	params.Add("jid", j.ID)
+	params.Add("name", name)
+	return Set(params, UpdateFlag)
+}
