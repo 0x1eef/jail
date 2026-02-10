@@ -51,59 +51,59 @@ const jailAPIVersion uint32 = 2
 const MaxChildJails int64 = 999999
 
 // jail_set(2) wrapper
-func Set(params Params, flags uintptr) error {
+func Set(params Params, flags uintptr) (int32, error) {
 	iov, keep, err := params.buildIovec()
 	if err != nil {
-		return err
+		return 0, err
 	}
 	return set(iov, keep, flags)
 }
 
 // jail_get(2) wrapper
-func Get(params Params, flags uintptr) error {
+func Get(params Params, flags uintptr) (int32, error) {
 	iov, keep, err := params.buildIovec()
 	if err != nil {
-		return err
+		return 0, err
 	}
 	return get(iov, keep, flags)
 }
 
 // jail_get(2)
-func get(iov []unix.Iovec, keep []interface{}, flags uintptr) error {
-	_, _, e1 := unix.Syscall(uintptr(sysJailGet), uintptr(unsafe.Pointer(&iov[0])), uintptr(len(iov)), flags)
+func get(iov []unix.Iovec, keep []interface{}, flags uintptr) (int32, error) {
+	jid, _, e1 := unix.Syscall(uintptr(sysJailGet), uintptr(unsafe.Pointer(&iov[0])), uintptr(len(iov)), flags)
 	runtime.KeepAlive(keep)
 	if e1 != 0 {
 		switch int(e1) {
 		case ErrJailGetFaultOutsideOfAllocatedSpace:
-			return fmt.Errorf("fault outside of allocated space: %w", e1)
+			return 0, fmt.Errorf("fault outside of allocated space: %w", e1)
 		case enoent:
-			return fmt.Errorf("jail referred to either does not exist or is inaccessible: %w", e1)
+			return 0, fmt.Errorf("jail referred to either does not exist or is inaccessible: %w", e1)
 		case einval:
-			return fmt.Errorf("invalid param provided: %w", e1)
+			return 0, fmt.Errorf("invalid param provided: %w", e1)
 		}
 	}
-	return nil
+	return int32(jid), nil
 }
 
 // jail_set(2)
-func set(iov []unix.Iovec, keep []interface{}, flags uintptr) error {
-	_, _, e1 := unix.Syscall(uintptr(sysJailSet), uintptr(unsafe.Pointer(&iov[0])), uintptr(len(iov)), flags)
+func set(iov []unix.Iovec, keep []interface{}, flags uintptr) (int32, error) {
+	jid, _, e1 := unix.Syscall(uintptr(sysJailSet), uintptr(unsafe.Pointer(&iov[0])), uintptr(len(iov)), flags)
 	runtime.KeepAlive(keep)
 	if e1 != 0 {
 		switch int(e1) {
 		case eperm:
-			return fmt.Errorf("not allowed or restricted: %w", e1)
+			return 0, fmt.Errorf("not allowed or restricted: %w", e1)
 		case ErrJailSetFaultOutsideOfAllocatedSpace:
-			return fmt.Errorf("fault outside of allocated space: %w", e1)
+			return 0, fmt.Errorf("fault outside of allocated space: %w", e1)
 		case ErrJailSetParamNotExist, ErrJailSetParamWrongSize:
-			return fmt.Errorf("invalid param provided: %w", e1)
+			return 0, fmt.Errorf("invalid param provided: %w", e1)
 		case ErrJailSetUpdateFlagNotSet:
-			return fmt.Errorf("set update flag not set: %w", e1)
+			return 0, fmt.Errorf("set update flag not set: %w", e1)
 		case ErrJailSetNameTooLong:
-			return fmt.Errorf("set name too long: %w", e1)
+			return 0, fmt.Errorf("set name too long: %w", e1)
 		case ErrJailSetNoIDsLeft:
-			return fmt.Errorf("no JID's left: %w", e1)
+			return 0, fmt.Errorf("no JID's left: %w", e1)
 		}
 	}
-	return nil
+	return int32(jid), nil
 }

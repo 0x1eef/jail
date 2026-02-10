@@ -17,6 +17,41 @@ and has diverged significantly since then.
 
 ## Examples
 
+**jail.NewJail**
+
+This function creates a new jail. It requires only a path and returns
+an instance of **jail.Jail**. The path should have a base install of
+FreeBSD. Everything else can be configured once the jail has been created,
+and through the instance of **jail.Jail** that has been returned to the
+caller:
+
+```go
+package main
+
+import "git.hardenedbsd.org/0x1eef/jail"
+
+func main() {
+	j, err := jail.NewJail("/tmp/jail")
+	if err != nil {
+		panic(err)
+	}
+	if err := setup(j); err != nil {
+		panic(err)
+	}
+}
+
+func setup(j *jail.Jail) error {
+	if err := j.SetName("tmp"); err != nil {
+		return err
+	}
+	if err := j.SetHostname("tmp.local"); err != nil {
+		return err
+	}
+	// etc...
+	return nil
+}
+```
+
 **jail.Living**
 
 This function returns a `[]*jail.Jail` slice that represents active
