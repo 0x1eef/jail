@@ -31,3 +31,5 @@ _testmain.go
 _examples/_examples
 .vscode
 *.code-workspace
+
+bin/

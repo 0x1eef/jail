@@ -1,10 +1,12 @@
 GO ?= go
 
+fmt:
+	$(GO) fmt ./...
+
 build:
-	$(GO) build -v 
+	$(GO) build -o bin/jls ./cmd/jls
 
 test:
-	$(GO) test -v -cover .
+	$(GO) test test/*
 
-clean:
-	$(GO) clean
+.PHONY: test
