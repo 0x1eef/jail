@@ -138,7 +138,8 @@ The Remove function can be used to remove a jail from the system.
 Removing a jail is destructive and requires sufficient privileges.
 The function will kill all processes belonging to the jail, and
 remove any children of that jail. For convenience, the Remove
-function is provided as a method on the **jail.Jail** struct:
+function is provided as a package-level function and as a method
+on the **jail.Jail** struct:
 
 ```go
 package main
