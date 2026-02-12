@@ -132,6 +132,30 @@ func main() {
 }
 ```
 
+**jail.Remove**
+
+The Remove function can be used to remove a jail from the system.
+Removing a jail is destructive and requires sufficient privileges.
+The function will kill all processes belonging to the jail, and
+remove any children of that jail. For convenience, the Remove
+function is provided as a method on the **jail.Jail** struct:
+
+```go
+package main
+
+import "git.hardenedbsd.org/0x1eef/jail"
+
+func main() {
+  j, err := jail.FindByID(1)
+  if err != nil {
+    panic(err)
+  }
+  if err := j.Remove(); err != nil {
+    panic(err)
+  }
+}
+```
+
 ## Credits
 
 * [@bdowns328](http://twitter.com/bdowns328) (original author)
