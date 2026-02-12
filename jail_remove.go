@@ -15,6 +15,8 @@ func Remove(jid int32) error {
 			return fmt.Errorf("unprivileged user")
 		case ErrjailAttachJIDNotExist:
 			return fmt.Errorf("JID does not exist")
+		default:
+			return fmt.Errorf("%v", e1)
 		}
 	}
 	return nil
