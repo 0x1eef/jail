@@ -151,3 +151,13 @@ func (j *Jail) SetHostname(name string) error {
 	_, err := Set(params, UpdateFlag)
 	return err
 }
+
+// Attach the current process to a jail
+func (j *Jail) Attach() error {
+	return Attach(j.ID)
+}
+
+// Remove a jail
+func (j *Jail) Remove() error {
+	return Remove(j.ID)
+}
