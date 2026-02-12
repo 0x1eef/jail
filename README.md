@@ -106,6 +106,32 @@ func main() {
 }
 ```
 
+**jail.Attach**
+
+The Attach function can be used to attach the current
+process to a jail. The function changes the process's
+root and current directories to the jail's path directory.
+For convenience, the Attach function is provided as a
+package-level function and as a method on the **jail.Jail**
+struct:
+
+```go
+package main
+
+import "git.hardenedbsd.org/0x1eef/jail"
+
+func main() {
+  j, err := jail.FindByID(1)
+  if err != nil {
+    panic(err)
+  }
+  if err := j.Attach(); err != nil {
+    panic(err)
+  }
+  // do something in the jail
+}
+```
+
 ## Credits
 
 * [@bdowns328](http://twitter.com/bdowns328) (original author)
