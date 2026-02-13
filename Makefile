@@ -7,6 +7,6 @@ build:
 	$(GO) build -o bin/jls ./cmd/jls
 
 test:
-	$(GO) test test/*
+	$(GO) test test/root/*
 
 .PHONY: test

@@ -1,6 +1,9 @@
 package test
 
 import (
+	"log"
+	"os"
+	"os/user"
 	"testing"
 
 	"git.hardenedbsd.org/0x1eef/jail"
@@ -42,5 +45,17 @@ func TestDying(t *testing.T) {
 	jails, err := jail.Dying()
 	if err != nil || len(jails) > 0 {
 		t.Fatalf("expected zero jails")
+	}
+}
+
+func init() {
+	log.SetFlags(0)
+	u, err := user.Current()
+	if err != nil || u.Uid != "0" {
+		log.Fatalf("you must be root to run these tests")
+	}
+	stat, err := os.Stat("/tmp/jail")
+	if err != nil || !stat.IsDir() {
+		log.Fatalf("A base install of FreeBSD is expected in /tmp/jail")
 	}
 }
