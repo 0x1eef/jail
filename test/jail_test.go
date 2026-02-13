@@ -1,208 +1,54 @@
-package jail
+package test
 
 import (
-	"reflect"
 	"testing"
 
-	"golang.org/x/sys/unix"
+	"git.hardenedbsd.org/0x1eef/jail"
 )
 
-func TestOpts_validate(t *testing.T) {
-	type fields struct {
-		Version  uint32
-		Path     string
-		Name     string
-		Hostname string
-		IP4      string
-		Chdir    bool
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			o := &Opts{
-				Version:  tt.fields.Version,
-				Path:     tt.fields.Path,
-				Name:     tt.fields.Name,
-				Hostname: tt.fields.Hostname,
-				IP4:      tt.fields.IP4,
-				Chdir:    tt.fields.Chdir,
-			}
-			if err := o.validate(); (err != nil) != tt.wantErr {
-				t.Errorf("Opts.validate() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
-
-func TestCreate(t *testing.T) {
-	type args struct {
-		o *Opts
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    int32
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := Create(tt.args.o)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Create() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("Create() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestNewParams(t *testing.T) {
-	tests := []struct {
-		name string
-		want Params
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := NewParams(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewParams() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestAttach(t *testing.T) {
-	type args struct {
-		jailID int32
-	}
-	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := Attach(tt.args.jailID); (err != nil) != tt.wantErr {
-				t.Errorf("Attach() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
+func TestNew(t *testing.T) {
+	j := newJail(t)
+	defer jail.Remove(j.ID)
 }
 
 func TestRemove(t *testing.T) {
-	type args struct {
-		jailID int32
-	}
-	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := Remove(tt.args.jailID); (err != nil) != tt.wantErr {
-				t.Errorf("Remove() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+	j := newJail(t)
+	if err := j.Remove(); err != nil {
+		t.Fatalf("remove jail fail: %v", err)
 	}
 }
 
-func TestSet(t *testing.T) {
-	type args struct {
-		params Params
-		flags  uintptr
-	}
-	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if _, err := Set(tt.args.params, tt.args.flags); (err != nil) != tt.wantErr {
-				t.Errorf("Set() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+func TestLiving(t *testing.T) {
+	j := newJail(t)
+	defer jail.Remove(j.ID)
+	jails, err := jail.Living()
+	if err != nil || len(jails) == 0 {
+		t.Fatalf("expected at least one jail")
 	}
 }
 
-func TestGet(t *testing.T) {
-	type args struct {
-		params Params
-		flags  uintptr
-	}
-	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if _, err := Get(tt.args.params, tt.args.flags); (err != nil) != tt.wantErr {
-				t.Errorf("Get() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+func TestAll(t *testing.T) {
+	j := newJail(t)
+	defer jail.Remove(j.ID)
+	jails, err := jail.All()
+	if err != nil || len(jails) == 0 {
+		t.Fatalf("expected at least one jail")
 	}
 }
 
-func Test_getSet(t *testing.T) {
-	type args struct {
-		call  int
-		iov   []unix.Iovec
-		keep  []interface{}
-		flags uintptr
-	}
-	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := getSet(tt.args.call, tt.args.iov, tt.args.keep, tt.args.flags); (err != nil) != tt.wantErr {
-				t.Errorf("getSet() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+func TestDying(t *testing.T) {
+	j := newJail(t)
+	defer jail.Remove(j.ID)
+	jails, err := jail.Dying()
+	if err != nil || len(jails) > 0 {
+		t.Fatalf("expected zero jails")
 	}
 }
 
-func Test_uint32ip(t *testing.T) {
-	type args struct {
-		nn uint32
+func newJail(t *testing.T) *jail.Jail {
+	j, err := jail.NewJail("/tmp/jail")
+	if err != nil {
+		t.Fatalf("new jail fail: %v", err)
 	}
-	tests := []struct {
-		name string
-		args args
-		want string
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := uint32ip(tt.args.nn); got != tt.want {
-				t.Errorf("uint32ip() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	return j
 }
