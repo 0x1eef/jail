@@ -28,126 +28,79 @@ type Perms struct {
 
 // Allow sethostname(3) in a jail
 func (j *Jail) AllowSetHostname() error {
-	params := NewParams()
-	params.Add("jid", j.ID)
-	params.Add("allow.set_hostname", int32(1))
-	_, err := Set(params, UpdateFlag)
-	return err
+	return j.SetParam("allow.set_hostname", int32(1))
 }
 
 // Deny sethostname(3) in a jail
 func (j *Jail) DenySetHostname() error {
-	params := NewParams()
-	params.Add("jid", j.ID)
-	params.Add("allow.noset_hostname", int32(1))
-	_, err := Set(params, UpdateFlag)
-	return err
+	return j.SetParam("allow.noset_hostname", int32(1))
 }
 
 // Allow use of extended attributes
 func (j *Jail) AllowExtattr() error {
-	params := NewParams()
-	params.Add("jid", j.ID)
-	params.Add("allow.extattr", int32(1))
-	_, err := Set(params, UpdateFlag)
-	return err
+	return j.SetParam("allow.extattr", int32(1))
 }
 
 // Deny use of extended attributes
 func (j *Jail) DenyExtattr() error {
-	params := NewParams()
-	params.Add("jid", j.ID)
-	params.Add("allow.noextattr", int32(1))
-	_, err := Set(params, UpdateFlag)
-	return err
+	return j.SetParam("allow.noextattr", int32(1))
 }
 
 // Allow setting global system time (eg via date(1))
 func (j *Jail) AllowSetTime() error {
-	params := NewParams()
-	params.Add("jid", j.ID)
-	params.Add("allow.settime", int32(1))
-	_, err := Set(params, UpdateFlag)
-	return err
+	return j.SetParam("allow.settime", int32(1))
 }
 
 // Deny setting global system time
 func (j *Jail) DenySetTime() error {
-	params := NewParams()
-	params.Add("jid", j.ID)
-	params.Add("allow.nosettime", int32(1))
-	_, err := Set(params, UpdateFlag)
-	return err
+	return j.SetParam("allow.nosettime", int32(1))
 }
 
 // Allow root to act as a superuser
 func (j *Jail) AllowRoot() error {
-	params := NewParams()
-	params.Add("jid", j.ID)
-	params.Add("allow.suser", int32(1))
-	_, err := Set(params, UpdateFlag)
-	return err
+	return j.SetParam("allow.suser", int32(1))
 }
 
 // Deny root to act as a superuser
 func (j *Jail) DenyRoot() error {
-	params := NewParams()
-	params.Add("jid", j.ID)
-	params.Add("allow.nosuser", int32(1))
-	_, err := Set(params, UpdateFlag)
-	return err
+	return j.SetParam("allow.nosuer", int32(1))
 }
 
 // Allow chflags(2) inside the jail
 func (j *Jail) AllowChflags() error {
-	params := NewParams()
-	params.Add("jid", j.ID)
-	params.Add("allow.chflags", int32(1))
-	_, err := Set(params, UpdateFlag)
-	return err
+	return j.SetParam("allow.chflags", int32(1))
 }
 
 // Deny chflags(2) inside the jail
 func (j *Jail) DenyChflags() error {
-	params := NewParams()
-	params.Add("jid", j.ID)
-	params.Add("allow.nochflags", int32(1))
-	_, err := Set(params, UpdateFlag)
-	return err
+	return j.SetParam("allow.nochflags", int32(1))
 }
 
 // Allow jail root to bind to ports lower than 1024
 func (j *Jail) AllowReservedPorts() error {
-	params := NewParams()
-	params.Add("jid", j.ID)
-	params.Add("allow.reserved_ports", int32(1))
-	_, err := Set(params, UpdateFlag)
-	return err
+	return j.SetParam("allow.reserved_ports", int32(1))
 }
 
 // Deny jail root to bind to ports lower than 1024
 func (j *Jail) DenyReservedPorts() error {
-	params := NewParams()
-	params.Add("jid", j.ID)
-	params.Add("allow.noreserved_ports", int32(1))
-	_, err := Set(params, UpdateFlag)
-	return err
+	return j.SetParam("allow.noreserved_ports", int32(1))
 }
 
 // Set the jail name
 func (j *Jail) SetName(name string) error {
-	params := NewParams()
-	params.Add("jid", j.ID)
-	params.Add("name", name)
-	_, err := Set(params, UpdateFlag)
-	return err
+	return j.SetParam("name", name)
 }
 
 // Set the jail hostname
 func (j *Jail) SetHostname(name string) error {
+	return j.SetParam("host.hostname", name)
+}
+
+// Set an arbitrary jail param
+func (j *Jail) SetParam(name string, v any) error {
 	params := NewParams()
 	params.Add("jid", j.ID)
-	params.Add("host.hostname", name)
+	params.Add(name, v)
 	_, err := Set(params, UpdateFlag)
 	return err
 }
