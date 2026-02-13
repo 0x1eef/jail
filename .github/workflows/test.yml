@@ -1,0 +1,16 @@
+name: jail
+on: [push]
+
+jobs:
+  FreeBSD15:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Jail
+        uses: vmactions/freebsd-vm@v1
+        with:
+          release: "15.0"
+          copyback: false
+          run: |
+            ci/bootstrap
+            make test

@@ -1,0 +1,18 @@
+#!/bin/sh
+set -e
+
+#
+# globals
+#
+link="https://download.freebsd.org/releases/amd64/15.0-RELEASE/base.txz"
+dest="/tmp/jail"
+pkgs="curl go"
+base="base.txz"
+
+#
+# main
+#
+pkg install -y ${pkgs}
+curl "${link}" -o "${base}"
+mkdir -p "${dest}"
+tar -xpf "${base}" -C "${dest}"
