@@ -44,11 +44,3 @@ func TestDying(t *testing.T) {
 		t.Fatalf("expected zero jails")
 	}
 }
-
-func newJail(t *testing.T) *jail.Jail {
-	j, err := jail.NewJail("/tmp/jail")
-	if err != nil {
-		t.Fatalf("new jail fail: %v", err)
-	}
-	return j
-}
