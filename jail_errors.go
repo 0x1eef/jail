@@ -39,29 +39,6 @@ const (
 	enametoolong = 63
 )
 
-// The jail() system call will fail with one of the below errors
-const (
-	// ErrJailPermDenied [EPERM] This process is not allowed to create a jail,
-	// either because it is not the super-user, or because it would exceed the
-	// jail's children.max limit.
-	ErrJailPermDenied = eperm
-
-	// ErrJailFaultOutsideOfAllocatedSpace [EFAULT] jail points to an address
-	// outside the allocated address space of the process.
-	ErrJailFaultOutsideOfAllocatedSpace = efault
-
-	// ErrJailInvalidVersion [EINVAL] The version number of the argument is not
-	// correct.
-	ErrJailInvalidVersion = einval
-
-	// ErrjailNoFreeJIDFound [EAGAIN] No free JID could be found.
-	ErrjailNoFreeJIDFound = eagain
-
-	// ErrJailNoSuchFileDirectory [ENOENT] No such file or directory.  A component of a specified pathname
-	// did not exist, or the pathname was   an empty string.
-	ErrJailNoSuchFileDirectory = enoent
-)
-
 // The jail_set() system call will fail with one of the below errors
 const (
 	// ErrJailSetPermDenied [EPERM] This process is not allowed to create a jail,
