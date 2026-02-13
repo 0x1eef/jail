@@ -130,5 +130,3 @@ const (
 	// ErrjailAttachJIDNotExist [EINVAL] The jail specified by jid does not exist.
 	ErrjailAttachJIDNotExist = einval
 )
-
-const ErrMsgLen = 1024
