@@ -35,6 +35,8 @@ func set(iov []unix.Iovec, keep []interface{}, flags uintptr) (int32, error) {
 			return 0, fmt.Errorf("set name too long: %w", e1)
 		case ErrJailSetNoIDsLeft:
 			return 0, fmt.Errorf("no JID's left: %w", e1)
+		default:
+			return 0, fmt.Errorf("%w", e1)
 		}
 	}
 	return int32(jid), nil

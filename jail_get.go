@@ -29,6 +29,8 @@ func get(iov []unix.Iovec, keep []interface{}, flags uintptr) (int32, error) {
 			return 0, fmt.Errorf("jail referred to either does not exist or is inaccessible: %w", e1)
 		case einval:
 			return 0, fmt.Errorf("invalid param provided: %w", e1)
+		default:
+			return 0, fmt.Errorf("%w", e1)
 		}
 	}
 	return int32(jid), nil
