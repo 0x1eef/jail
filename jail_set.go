@@ -18,7 +18,7 @@ func Set(params Params, flags uintptr) (int32, error) {
 }
 
 // jail_set(2)
-func set(iov []unix.Iovec, keep []interface{}, flags uintptr) (int32, error) {
+func set(iov []unix.Iovec, keep []any, flags uintptr) (int32, error) {
 	jid, _, e1 := unix.Syscall(uintptr(sysJailSet), uintptr(unsafe.Pointer(&iov[0])), uintptr(len(iov)), flags)
 	runtime.KeepAlive(keep)
 	if e1 != 0 {

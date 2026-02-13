@@ -18,7 +18,7 @@ func Get(params Params, flags uintptr) (int32, error) {
 }
 
 // jail_get(2)
-func get(iov []unix.Iovec, keep []interface{}, flags uintptr) (int32, error) {
+func get(iov []unix.Iovec, keep []any, flags uintptr) (int32, error) {
 	jid, _, e1 := unix.Syscall(uintptr(sysJailGet), uintptr(unsafe.Pointer(&iov[0])), uintptr(len(iov)), flags)
 	runtime.KeepAlive(keep)
 	if e1 != 0 {
