@@ -48,6 +48,15 @@ func TestDying(t *testing.T) {
 	}
 }
 
+func TestFindByID(t *testing.T) {
+	j := newJail(t)
+	defer jail.Remove(j.ID)
+	jj, err := jail.FindByID(j.ID)
+	if err != nil || j.ID != jj.ID {
+		t.Fatalf("expected to find the same jail")
+	}
+}
+
 func init() {
 	log.SetFlags(0)
 	u, err := user.Current()
