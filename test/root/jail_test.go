@@ -25,7 +25,9 @@ func TestLiving(t *testing.T) {
 	j := newJail(t)
 	defer jail.Remove(j.ID)
 	jails, err := jail.Living()
-	if err != nil || len(jails) == 0 {
+	if err != nil {
+		t.Fatalf("%v", err)
+	} else if len(jails) == 0 {
 		t.Fatalf("expected at least one jail")
 	}
 }
@@ -34,7 +36,9 @@ func TestAll(t *testing.T) {
 	j := newJail(t)
 	defer jail.Remove(j.ID)
 	jails, err := jail.All()
-	if err != nil || len(jails) == 0 {
+	if err != nil {
+		t.Fatalf("%v", err)
+	} else if len(jails) == 0 {
 		t.Fatalf("expected at least one jail")
 	}
 }
@@ -43,7 +47,9 @@ func TestDying(t *testing.T) {
 	j := newJail(t)
 	defer jail.Remove(j.ID)
 	jails, err := jail.Dying()
-	if err != nil || len(jails) > 0 {
+	if err != nil {
+		t.Fatalf("%v", err)
+	} else if len(jails) > 0 {
 		t.Fatalf("expected zero jails")
 	}
 }
@@ -52,7 +58,9 @@ func TestFindByID(t *testing.T) {
 	j := newJail(t)
 	defer jail.Remove(j.ID)
 	jj, err := jail.FindByID(j.ID)
-	if err != nil || j.ID != jj.ID {
+	if err != nil {
+		t.Fatalf("%v", err)
+	} else if j.ID != jj.ID {
 		t.Fatalf("expected to find the same jail")
 	}
 }
