@@ -68,13 +68,7 @@ func FindByID(jid int32) (*Jail, error) {
 	if err := setBool(&j.Perms.AllowSetHostname, "allow.set_hostname"); err != nil {
 		return nil, err
 	}
-	if err := setBool(&j.Perms.AllowExtattr, "allow.extattr"); err != nil {
-		return nil, err
-	}
 	if err := setBool(&j.Perms.AllowReservedPorts, "allow.reserved_ports"); err != nil {
-		return nil, err
-	}
-	if err := setBool(&j.Perms.AllowSetTime, "allow.settime"); err != nil {
 		return nil, err
 	}
 	if err := setBool(&j.Perms.AllowRoot, "allow.suser"); err != nil {
@@ -104,10 +98,16 @@ func FindByID(jid int32) (*Jail, error) {
 	if err := setBool(&j.Perms.AllowQuotas, "allow.quotas"); err != nil {
 		return nil, err
 	}
-	if err := setBool(&j.Perms.AllowRouting, "allow.routing"); err != nil {
+	if err := setBoolOptional(&j.Perms.AllowExtattr, "allow.extattr"); err != nil {
+		return nil, err
+	}
+	if err := setBoolOptional(&j.Perms.AllowRouting, "allow.routing"); err != nil {
 		return nil, err
 	}
 	if err := setBool(&j.Perms.AllowUnprivilegedProcDebug, "allow.unprivileged_proc_debug"); err != nil {
+		return nil, err
+	}
+	if err := setBoolOptional(&j.Perms.AllowSetTime, "allow.settime"); err != nil {
 		return nil, err
 	}
 	if err := setBoolOptional(&j.Perms.AllowAdjTime, "allow.adjtime"); err != nil {
