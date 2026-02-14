@@ -1,7 +1,6 @@
 package jail
 
 import (
-	"bytes"
 	"errors"
 
 	"golang.org/x/sys/unix"
@@ -9,88 +8,133 @@ import (
 
 // Find a jail by ID.
 func FindByID(jid int32) (*Jail, error) {
-	var (
-		null             = "\x00"
-		name             = make([]byte, 1024)
-		path             = make([]byte, 1024)
-		hostname         = make([]byte, 1024)
-		osrelease        = make([]byte, 1024)
-		vnet             int32
-		enforceStatFS    int32
-		osreldate        int32
-		secureLevel      int32
-		parent           int32
-		dying            int32
-		persist          int32
-		devfsRuleset     int32
-		canSetHostname   int32
-		canExtattr       int32
-		canSetTime       int32
-		canRoot          int32
-		canChflags       int32
-		canReservedPorts int32
-		canRawSockets    int32
-		canMount         int32
-		canMountDevfs    int32
-		canMountProcfs   int32
-		canMountTmpfs    int32
-	)
-	params := NewParams()
-	params.Add("jid", jid)
-	params.Add("name", name)
-	params.Add("path", path)
-	params.Add("vnet", &vnet)
-	params.Add("enforce_statfs", &enforceStatFS)
-	params.Add("host.hostname", hostname)
-	params.Add("osrelease", osrelease)
-	params.Add("osreldate", &osreldate)
-	params.Add("securelevel", &secureLevel)
-	params.Add("parent", &parent)
-	params.Add("dying", &dying)
-	params.Add("persist", &persist)
-	params.Add("devfs_ruleset", &devfsRuleset)
-	params.Add("allow.set_hostname", &canSetHostname)
-	params.Add("allow.extattr", &canExtattr)
-	params.Add("allow.settime", &canSetTime)
-	params.Add("allow.suser", &canRoot)
-	params.Add("allow.chflags", &canChflags)
-	params.Add("allow.reserved_ports", &canReservedPorts)
-	params.Add("allow.raw_sockets", &canRawSockets)
-	params.Add("allow.mount", &canMount)
-	params.Add("allow.mount.devfs", &canMountDevfs)
-	params.Add("allow.mount.procfs", &canMountProcfs)
-	params.Add("allow.mount.tmpfs", &canMountTmpfs)
-	if _, err := Get(params, 0); err != nil {
+	j := &Jail{ID: jid}
+	setBool := func(target *bool, mib string) error {
+		v, err := j.GetBool(mib)
+		if err != nil {
+			return err
+		}
+		*target = v
+		return nil
+	}
+	setBoolOptional := func(target *bool, mib string) error {
+		v, err := j.GetBool(mib)
+		if err != nil {
+			if errors.Is(err, unix.EINVAL) || errors.Is(err, unix.ENOENT) {
+				return nil
+			}
+			return err
+		}
+		*target = v
+		return nil
+	}
+	var err error
+	if j.Name, err = j.GetString("name"); err != nil {
 		return nil, err
 	}
-	return &Jail{
-		ID:            jid,
-		Name:          string(bytes.Trim(name, null)),
-		Path:          string(bytes.Trim(path, null)),
-		Hostname:      string(bytes.Trim(hostname, null)),
-		OSRelease:     string(bytes.Trim(osrelease, null)),
-		Vnet:          vnet == 1,
-		EnforceStatFS: enforceStatFS,
-		OSRelDate:     osreldate,
-		SecureLevel:   secureLevel,
-		Parent:        parent,
-		DevFSRuleset:  devfsRuleset,
-		Dying:         dying == 1,
-		Persist:       persist == 1,
-		Perms: Perms{
-			AllowSetHostname:   canSetHostname == 1,
-			AllowExtattr:       canExtattr == 1,
-			AllowSetTime:       canSetTime == 1,
-			AllowRoot:          canRoot == 1,
-			AllowChflags:       canChflags == 1,
-			AllowReservedPorts: canReservedPorts == 1,
-			AllowRawSockets:    canRawSockets == 1,
-			AllowMount:         canMount == 1,
-			AllowMountDevfs:    canMountDevfs == 1,
-			AllowMountProcfs:   canMountProcfs == 1,
-			AllowMountTmpfs:    canMountTmpfs == 1,
-		},
-	}, nil
+	if j.Path, err = j.GetString("path"); err != nil {
+		return nil, err
+	}
+	if j.Hostname, err = j.GetString("host.hostname"); err != nil {
+		return nil, err
+	}
+	if j.OSRelease, err = j.GetString("osrelease"); err != nil {
+		return nil, err
+	}
+	if j.EnforceStatFS, err = j.GetInt32("enforce_statfs"); err != nil {
+		return nil, err
+	}
+	if j.OSRelDate, err = j.GetInt32("osreldate"); err != nil {
+		return nil, err
+	}
+	if j.SecureLevel, err = j.GetInt32("securelevel"); err != nil {
+		return nil, err
+	}
+	if j.Parent, err = j.GetInt32("parent"); err != nil {
+		return nil, err
+	}
+	if j.DevFSRuleset, err = j.GetInt32("devfs_ruleset"); err != nil {
+		return nil, err
+	}
+	if j.Vnet, err = j.GetBool("vnet"); err != nil {
+		return nil, err
+	}
+	if j.Dying, err = j.GetBool("dying"); err != nil {
+		return nil, err
+	}
+	if j.Persist, err = j.GetBool("persist"); err != nil {
+		return nil, err
+	}
+	if err := setBool(&j.Perms.AllowSetHostname, "allow.set_hostname"); err != nil {
+		return nil, err
+	}
+	if err := setBool(&j.Perms.AllowExtattr, "allow.extattr"); err != nil {
+		return nil, err
+	}
+	if err := setBool(&j.Perms.AllowReservedPorts, "allow.reserved_ports"); err != nil {
+		return nil, err
+	}
+	if err := setBool(&j.Perms.AllowSetTime, "allow.settime"); err != nil {
+		return nil, err
+	}
+	if err := setBool(&j.Perms.AllowRoot, "allow.suser"); err != nil {
+		return nil, err
+	}
+	if err := setBool(&j.Perms.AllowChflags, "allow.chflags"); err != nil {
+		return nil, err
+	}
+	if err := setBool(&j.Perms.AllowRawSockets, "allow.raw_sockets"); err != nil {
+		return nil, err
+	}
+	if err := setBool(&j.Perms.AllowMount, "allow.mount"); err != nil {
+		return nil, err
+	}
+	if err := setBool(&j.Perms.AllowMountDevfs, "allow.mount.devfs"); err != nil {
+		return nil, err
+	}
+	if err := setBool(&j.Perms.AllowMlock, "allow.mlock"); err != nil {
+		return nil, err
+	}
+	if err := setBool(&j.Perms.AllowReadMsgbuf, "allow.read_msgbuf"); err != nil {
+		return nil, err
+	}
+	if err := setBool(&j.Perms.AllowSocketAF, "allow.socket_af"); err != nil {
+		return nil, err
+	}
+	if err := setBool(&j.Perms.AllowQuotas, "allow.quotas"); err != nil {
+		return nil, err
+	}
+	if err := setBool(&j.Perms.AllowAdjTime, "allow.adjtime"); err != nil {
+		return nil, err
+	}
+	if err := setBool(&j.Perms.AllowRouting, "allow.routing"); err != nil {
+		return nil, err
+	}
+	if err := setBool(&j.Perms.AllowSetAudit, "allow.setaudit"); err != nil {
+		return nil, err
+	}
+	if err := setBool(&j.Perms.AllowUnprivilegedProcDebug, "allow.unprivileged_proc_debug"); err != nil {
+		return nil, err
+	}
+	if err := setBool(&j.Perms.AllowUnprivilegedParentTampering, "allow.unprivileged_parent_tampering"); err != nil {
+		return nil, err
+	}
+	if err := setBoolOptional(&j.Perms.AllowMountProcfs, "allow.mount.procfs"); err != nil {
+		return nil, err
+	}
+	if err := setBoolOptional(&j.Perms.AllowMountTmpfs, "allow.mount.tmpfs"); err != nil {
+		return nil, err
+	}
+	if err := setBoolOptional(&j.Perms.AllowMountNullfs, "allow.mount.nullfs"); err != nil {
+		return nil, err
+	}
+	if err := setBoolOptional(&j.Perms.AllowMountZfs, "allow.mount.zfs"); err != nil {
+		return nil, err
+	}
+	if err := setBoolOptional(&j.Perms.AllowVMM, "allow.vmm"); err != nil {
+		return nil, err
+	}
+	return j, nil
 }
 
 // Returns all living jails
