@@ -77,6 +77,15 @@ func (j *Jail) GetInt32(mib string) (int32, error) {
 	return i, err
 }
 
+// Set an arbitrary jail param
+func (j *Jail) SetParam(name string, v any) error {
+	params := NewParams()
+	params.Add("jid", j.ID)
+	params.Add(name, v)
+	_, err := Set(params, UpdateFlag)
+	return err
+}
+
 // Allow sethostname(3) in a jail
 func (j *Jail) AllowSetHostname() error {
 	return j.SetParam("allow.set_hostname", int32(1))
@@ -315,15 +324,6 @@ func (j *Jail) SetName(name string) error {
 // Set the jail hostname
 func (j *Jail) SetHostname(name string) error {
 	return j.SetParam("host.hostname", name)
-}
-
-// Set an arbitrary jail param
-func (j *Jail) SetParam(name string, v any) error {
-	params := NewParams()
-	params.Add("jid", j.ID)
-	params.Add(name, v)
-	_, err := Set(params, UpdateFlag)
-	return err
 }
 
 // Attach the current process to a jail

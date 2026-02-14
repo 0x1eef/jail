@@ -3,7 +3,7 @@
 </p>
 <p align="center">
   <a href="https://godoc.org/github.com/briandowns/jail"><img src="https://godoc.org/github.com/briandowns/jail?status.svg" alt="GoDoc"></a>
-  <a href="https://opensource.org/licenses/BSD-3-Clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-orange.svg?" alt="License"></a>
+  <a href="https://opensource.org/license/0bsd"><img src="https://img.shields.io/badge/License-0BSD-orange.svg?" alt="License"></a>
   <a href="https://github.com/briandowns/jail/releases"><img src="https://img.shields.io/badge/version-0.1.0-green.svg?" alt="Version"></a>
 </p>
 
@@ -169,5 +169,8 @@ func main() {
 
 ## License
 
-[BSD 2 Clause](https://choosealicense.com/licenses/bsd-2-clause/) <br>
-See [LICENSE](./LICENSE)
+Original code is [BSD 2 Clause](https://choosealicense.com/licenses/bsd-2-clause/) <br>
+See [LICENSE](./LICENSE) <br>
+
+Modifications and new files in this fork are [BSD 0 Clause](https://choosealicense.com/licenses/0bsd/) <br>
+See [0LICENSE](./0LICENSE)
