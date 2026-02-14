@@ -30,6 +30,7 @@ func FindByID(jid int32) (*Jail, error) {
 		canChflags       int32
 		canReservedPorts int32
 		canRawSockets    int32
+		canMount         int32
 	)
 	params := NewParams()
 	params.Add("jid", jid)
@@ -52,6 +53,7 @@ func FindByID(jid int32) (*Jail, error) {
 	params.Add("allow.chflags", &canChflags)
 	params.Add("allow.reserved_ports", &canReservedPorts)
 	params.Add("allow.raw_sockets", &canRawSockets)
+	params.Add("allow.mount", &canMount)
 	if _, err := Get(params, 0); err != nil {
 		return nil, err
 	}
@@ -77,6 +79,7 @@ func FindByID(jid int32) (*Jail, error) {
 			AllowChflags:       canChflags == 1,
 			AllowReservedPorts: canReservedPorts == 1,
 			AllowRawSockets:    canRawSockets == 1,
+			AllowMount:         canMount == 1,
 		},
 	}, nil
 }
