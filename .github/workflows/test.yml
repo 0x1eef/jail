@@ -2,6 +2,19 @@ name: jail
 on: [push]
 
 jobs:
+  F14:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Jail
+        uses: vmactions/freebsd-vm@v1
+        with:
+          release: "14.3"
+          copyback: false
+          run: |
+            REL=14.3 ci/bootstrap
+            make test
+
   F15:
     runs-on: ubuntu-latest
     steps:
