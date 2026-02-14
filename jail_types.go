@@ -1,6 +1,8 @@
 package jail
 
-import "bytes"
+import (
+	"golang.org/x/sys/unix"
+)
 
 type Jail struct {
 	Name          string `json:"name"`
@@ -62,7 +64,7 @@ func (j *Jail) GetString(mib string) (string, error) {
 	params.Add("jid", j.ID)
 	params.Add(mib, b)
 	_, err := Get(params, 0)
-	return string(bytes.Trim(b, "\x00")), err
+	return unix.ByteSliceToString(b), err
 }
 
 // Get a jail parameter (int32)
