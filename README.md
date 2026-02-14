@@ -157,6 +157,38 @@ func main() {
 }
 ```
 
+**Jail.Get{Bool,String,Int32}**
+
+The [Jail struct](jail_types.go) exposes core fields and makes a best effort
+to expose additional parameters beyond that, but it cannot cover everything
+on every system. For anything not covered by the struct, then there's **GetBool**,
+**GetString**, and **GetInt32** to query a parameter directly by name:
+
+```go
+package main
+
+import (
+  "fmt"
+  "errors"
+
+  "git.hardenedbsd.org/0x1eef/jail"
+  "golang.org/x/sys/unix"
+)
+
+func main() {
+  j, err := jail.FindByID(1)
+  if err != nil { panic(err) }
+  rules, err := j.GetString("security.mac.do.rules")
+  if errors.Is(err, unix.ENOENT) || errors.Is(err, unix.EINVAL) {
+    fmt.Println("parameter unsupported")
+  } else if err != nil {
+    panic(err)
+  } else {
+    fmt.Printf("rules: %s\n", rules)
+  }
+}
+```
+
 ## Credits
 
 * [@bdowns328](http://twitter.com/bdowns328) (original author)
