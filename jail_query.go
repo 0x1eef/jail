@@ -29,6 +29,23 @@ func FindByID(jid int32) (*Jail, error) {
 		canRoot          int32
 		canChflags       int32
 		canReservedPorts int32
+		canRawSockets    int32
+		canMount         int32
+		canMountDevfs    int32
+		canMountProcfs   int32
+		canMountTmpfs    int32
+		canMountNullfs   int32
+		canMountZfs      int32
+		canMlock         int32
+		canReadMsgbuf    int32
+		canSocketAF      int32
+		canQuotas        int32
+		canAdjTime       int32
+		canRouting       int32
+		canSetAudit      int32
+		canUPDebug       int32
+		canUPTamper      int32
+		canVMM           int32
 	)
 	params := NewParams()
 	params.Add("jid", jid)
@@ -50,6 +67,23 @@ func FindByID(jid int32) (*Jail, error) {
 	params.Add("allow.suser", &canRoot)
 	params.Add("allow.chflags", &canChflags)
 	params.Add("allow.reserved_ports", &canReservedPorts)
+	params.Add("allow.raw_sockets", &canRawSockets)
+	params.Add("allow.mount", &canMount)
+	params.Add("allow.mount.devfs", &canMountDevfs)
+	params.Add("allow.mount.procfs", &canMountProcfs)
+	params.Add("allow.mount.tmpfs", &canMountTmpfs)
+	params.Add("allow.mount.nullfs", &canMountNullfs)
+	params.Add("allow.mount.zfs", &canMountZfs)
+	params.Add("allow.mlock", &canMlock)
+	params.Add("allow.read_msgbuf", &canReadMsgbuf)
+	params.Add("allow.socket_af", &canSocketAF)
+	params.Add("allow.quotas", &canQuotas)
+	params.Add("allow.adjtime", &canAdjTime)
+	params.Add("allow.routing", &canRouting)
+	params.Add("allow.setaudit", &canSetAudit)
+	params.Add("allow.unprivileged_proc_debug", &canUPDebug)
+	params.Add("allow.unprivileged_parent_tampering", &canUPTamper)
+	params.Add("allow.vmm", &canVMM)
 	if _, err := Get(params, 0); err != nil {
 		return nil, err
 	}
@@ -68,12 +102,29 @@ func FindByID(jid int32) (*Jail, error) {
 		Dying:         dying == 1,
 		Persist:       persist == 1,
 		Perms: Perms{
-			AllowSetHostname:   canSetHostname == 1,
-			AllowExtattr:       canExtattr == 1,
-			AllowSetTime:       canSetTime == 1,
-			AllowRoot:          canRoot == 1,
-			AllowChflags:       canChflags == 1,
-			AllowReservedPorts: canReservedPorts == 1,
+			AllowSetHostname:                 canSetHostname == 1,
+			AllowExtattr:                     canExtattr == 1,
+			AllowSetTime:                     canSetTime == 1,
+			AllowRoot:                        canRoot == 1,
+			AllowChflags:                     canChflags == 1,
+			AllowReservedPorts:               canReservedPorts == 1,
+			AllowRawSockets:                  canRawSockets == 1,
+			AllowMount:                       canMount == 1,
+			AllowMountDevfs:                  canMountDevfs == 1,
+			AllowMountProcfs:                 canMountProcfs == 1,
+			AllowMountTmpfs:                  canMountTmpfs == 1,
+			AllowMountNullfs:                 canMountNullfs == 1,
+			AllowMountZfs:                    canMountZfs == 1,
+			AllowMlock:                       canMlock == 1,
+			AllowReadMsgbuf:                  canReadMsgbuf == 1,
+			AllowSocketAF:                    canSocketAF == 1,
+			AllowQuotas:                      canQuotas == 1,
+			AllowAdjTime:                     canAdjTime == 1,
+			AllowRouting:                     canRouting == 1,
+			AllowSetAudit:                    canSetAudit == 1,
+			AllowUnprivilegedProcDebug:       canUPDebug == 1,
+			AllowUnprivilegedParentTampering: canUPTamper == 1,
+			AllowVMM:                         canVMM == 1,
 		},
 	}, nil
 }
