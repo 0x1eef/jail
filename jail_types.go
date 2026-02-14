@@ -1,5 +1,7 @@
 package jail
 
+import "bytes"
+
 type Jail struct {
 	Name          string `json:"name"`
 	Path          string `json:"path"`
@@ -41,6 +43,36 @@ type Perms struct {
 	AllowUnprivilegedProcDebug       bool `json:"allow_unprivileged_proc_debug"`
 	AllowUnprivilegedParentTampering bool `json:"allow_unprivileged_parent_tampering"`
 	AllowVMM                         bool `json:"allow_vmm"`
+}
+
+// Get a jail parameter (boolean)
+func (j *Jail) GetBool(mib string) (bool, error) {
+	var b int32
+	params := NewParams()
+	params.Add("jid", j.ID)
+	params.Add(mib, &b)
+	_, err := Get(params, 0)
+	return b == 1, err
+}
+
+// Get a jail parameter (string)
+func (j *Jail) GetString(mib string) (string, error) {
+	b := make([]byte, 1024)
+	params := NewParams()
+	params.Add("jid", j.ID)
+	params.Add(mib, b)
+	_, err := Get(params, 0)
+	return string(bytes.Trim(b, "\x00")), err
+}
+
+// Get a jail parameter (int32)
+func (j *Jail) GetInt32(mib string) (int32, error) {
+	var i int32
+	params := NewParams()
+	params.Add("jid", j.ID)
+	params.Add(mib, &i)
+	_, err := Get(params, 0)
+	return i, err
 }
 
 // Allow sethostname(3) in a jail
