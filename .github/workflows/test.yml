@@ -2,7 +2,7 @@ name: jail
 on: [push]
 
 jobs:
-  FreeBSD15:
+  F15:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -12,5 +12,5 @@ jobs:
           release: "15.0"
           copyback: false
           run: |
-            ci/bootstrap
+            REL=15.0 ci/bootstrap
             make test
