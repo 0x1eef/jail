@@ -165,6 +165,8 @@ func main() {
 ## Sources
 
 * [github.com/@0x1eef](https://github.com/0x1eef/jail)
+* [codeberg.org/@0x1eef](https://codeberg.org/0x1eef/jail)
+* [bsd.cafe/@0x1eef](https://brew.bsd.cafe/0x1eef/jail)
 * [hardenedbsd.org/@0x1eef](https://git.HardenedBSD.org/0x1eef/jail)
 
 ## License
