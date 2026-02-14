@@ -65,6 +65,37 @@ func TestFindByID(t *testing.T) {
 	}
 }
 
+func TestGetBool(t *testing.T) {
+	j := newJail(t)
+	defer jail.Remove(j.ID)
+	dying, err := j.GetBool("dying")
+	if err != nil {
+		t.Fatalf("%v", err)
+	} else if dying {
+		t.Fatalf("expected jail to be alive")
+	}
+}
+
+func TestGetString(t *testing.T) {
+	j := newJail(t)
+	defer jail.Remove(j.ID)
+	path, err := j.GetString("path")
+	if err != nil {
+		t.Fatalf("%v", err)
+	} else if path != "/tmp/jail" {
+		t.Fatalf("expected path to be /tmp/jail but was %s", path)
+	}
+}
+
+func TestGetInt32(t *testing.T) {
+	j := newJail(t)
+	defer jail.Remove(j.ID)
+	_, err := j.GetInt32("children.max")
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
 func init() {
 	log.SetFlags(0)
 	u, err := user.Current()
