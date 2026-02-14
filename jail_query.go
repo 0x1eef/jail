@@ -104,19 +104,19 @@ func FindByID(jid int32) (*Jail, error) {
 	if err := setBool(&j.Perms.AllowQuotas, "allow.quotas"); err != nil {
 		return nil, err
 	}
-	if err := setBool(&j.Perms.AllowAdjTime, "allow.adjtime"); err != nil {
-		return nil, err
-	}
 	if err := setBool(&j.Perms.AllowRouting, "allow.routing"); err != nil {
-		return nil, err
-	}
-	if err := setBool(&j.Perms.AllowSetAudit, "allow.setaudit"); err != nil {
 		return nil, err
 	}
 	if err := setBool(&j.Perms.AllowUnprivilegedProcDebug, "allow.unprivileged_proc_debug"); err != nil {
 		return nil, err
 	}
-	if err := setBool(&j.Perms.AllowUnprivilegedParentTampering, "allow.unprivileged_parent_tampering"); err != nil {
+	if err := setBoolOptional(&j.Perms.AllowAdjTime, "allow.adjtime"); err != nil {
+		return nil, err
+	}
+	if err := setBoolOptional(&j.Perms.AllowSetAudit, "allow.setaudit"); err != nil {
+		return nil, err
+	}
+	if err := setBoolOptional(&j.Perms.AllowUnprivilegedParentTampering, "allow.unprivileged_parent_tampering"); err != nil {
 		return nil, err
 	}
 	if err := setBoolOptional(&j.Perms.AllowMountProcfs, "allow.mount.procfs"); err != nil {
