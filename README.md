@@ -67,22 +67,22 @@ for more information on these functions:
 package main
 
 import (
-  "fmt"
+	"fmt"
 
-  "git.hardenedbsd.org/0x1eef/jail"
+	"git.hardenedbsd.org/0x1eef/jail"
 )
 
 func main() {
-  if jails, err := jail.Living(); err != nil {
-    panic(err)
-  } else {
-    for _, j := range jails {
-      fmt.Printf("%s: %s\n", "name", j.Name)
-      fmt.Printf("%s: %s\n", "path", j.Path)
-      fmt.Printf("%s: %s\n", "hostname", j.Hostname)
-      fmt.Printf("\n")
-    }
-  }
+	if jails, err := jail.Living(); err != nil {
+		panic(err)
+	} else {
+		for _, j := range jails {
+			fmt.Printf("%s: %s\n", "name", j.Name)
+			fmt.Printf("%s: %s\n", "path", j.Path)
+			fmt.Printf("%s: %s\n", "hostname", j.Hostname)
+			fmt.Printf("\n")
+		}
+	}
 }
 ```
 
@@ -99,13 +99,13 @@ package main
 import "git.hardenedbsd.org/0x1eef/jail"
 
 func main() {
-  j, err := jail.FindByID(1)
-  if err != nil {
-    panic(err)
-  }
-  if err := j.DenyRoot(); err != nil {
-    panic(err)
-  }
+	j, err := jail.FindByID(1)
+	if err != nil {
+		panic(err)
+	}
+	if err := j.DenyRoot(); err != nil {
+		panic(err)
+	}
 }
 ```
 
@@ -124,14 +124,14 @@ package main
 import "git.hardenedbsd.org/0x1eef/jail"
 
 func main() {
-  j, err := jail.FindByID(1)
-  if err != nil {
-    panic(err)
-  }
-  if err := j.Attach(); err != nil {
-    panic(err)
-  }
-  // do something in the jail
+	j, err := jail.FindByID(1)
+	if err != nil {
+		panic(err)
+	}
+	if err := j.Attach(); err != nil {
+		panic(err)
+	}
+	// do something in the jail
 }
 ```
 
@@ -150,13 +150,13 @@ package main
 import "git.hardenedbsd.org/0x1eef/jail"
 
 func main() {
-  j, err := jail.FindByID(1)
-  if err != nil {
-    panic(err)
-  }
-  if err := j.Remove(); err != nil {
-    panic(err)
-  }
+	j, err := jail.FindByID(1)
+	if err != nil {
+		panic(err)
+	}
+	if err := j.Remove(); err != nil {
+		panic(err)
+	}
 }
 ```
 
@@ -172,24 +172,26 @@ by name:
 package main
 
 import (
-  "fmt"
-  "errors"
+	"errors"
+	"fmt"
 
-  "git.hardenedbsd.org/0x1eef/jail"
-  "golang.org/x/sys/unix"
+	"git.hardenedbsd.org/0x1eef/jail"
+	"golang.org/x/sys/unix"
 )
 
 func main() {
-  j, err := jail.FindByID(1)
-  if err != nil { panic(err) }
-  rules, err := j.GetString("security.mac.do.rules")
-  if errors.Is(err, unix.ENOENT) || errors.Is(err, unix.EINVAL) {
-    fmt.Println("parameter unsupported")
-  } else if err != nil {
-    panic(err)
-  } else {
-    fmt.Printf("rules: %s\n", rules)
-  }
+	j, err := jail.FindByID(1)
+	if err != nil {
+		panic(err)
+	}
+	rules, err := j.GetString("security.mac.do.rules")
+	if errors.Is(err, unix.ENOENT) || errors.Is(err, unix.EINVAL) {
+		fmt.Println("parameter unsupported")
+	} else if err != nil {
+		panic(err)
+	} else {
+		fmt.Printf("rules: %s\n", rules)
+	}
 }
 ```
 
@@ -210,26 +212,30 @@ case a boolean may be returned as an `int32` with a value of 0 or 1:
 package main
 
 import (
-  "fmt"
-  "os"
+	"fmt"
+	"os"
 
-  "git.hardenedbsd.org/0x1eef/jail"
+	"git.hardenedbsd.org/0x1eef/jail"
 )
 
 func main() {
-  j, err := jail.FindByID(1)
-  if err != nil { panic(err) }
-  p, err := j.GetAny(os.Args[1])
-  if err != nil { panic(err) }
-  if s, ok := p.(string); ok {
-    fmt.Printf("%s ", s)
-  } else if b, ok := p.(bool); ok {
-    fmt.Printf("%t ", b)
-  } else if i, ok := p.(int32); ok {
-    fmt.Printf("%d ", i)
-  } else {
-    // ????
-  }
+	j, err := jail.FindByID(1)
+	if err != nil {
+		panic(err)
+	}
+	p, err := j.GetAny(os.Args[1])
+	if err != nil {
+		panic(err)
+	}
+	if s, ok := p.(string); ok {
+		fmt.Printf("%s ", s)
+	} else if b, ok := p.(bool); ok {
+		fmt.Printf("%t ", b)
+	} else if i, ok := p.(int32); ok {
+		fmt.Printf("%d ", i)
+	} else {
+		// ????
+	}
 }
 ```
 
