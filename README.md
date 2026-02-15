@@ -47,6 +47,9 @@ func setup(j *jail.Jail) error {
 	if err := j.SetHostname("tmp.local"); err != nil {
 		return err
 	}
+	if err := j.SetSecureLevel(3); err != nil {
+		return err
+	}
 	// etc...
 	return nil
 }

@@ -96,6 +96,15 @@ func TestGetInt32(t *testing.T) {
 	}
 }
 
+func TestSetSecureLevel(t *testing.T) {
+	j := newJail(t)
+	defer jail.Remove(j.ID)
+	err := j.SetSecureLevel(3)
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
 func init() {
 	log.SetFlags(0)
 	u, err := user.Current()

@@ -326,6 +326,11 @@ func (j *Jail) SetHostname(name string) error {
 	return j.SetParam("host.hostname", name)
 }
 
+// Set the securelevel
+func (j *Jail) SetSecureLevel(level int32) error {
+	return j.SetParam("securelevel", level)
+}
+
 // Attach the current process to a jail
 func (j *Jail) Attach() error {
 	return Attach(j.ID)
