@@ -1,0 +1,24 @@
+#!/bin/sh
+set -e
+
+#
+# variables
+#
+rel="${1}"
+
+#
+# Guards
+#
+if [ -z "${rel}" ]; then
+  echo "provide a release"
+  exit 1
+fi
+
+#
+# main
+#
+git commit -am "${rel}"
+git tag "${rel}"
+for r in $(git remote); do
+  git push ${r} $(git branch --show-current) --tags
+end

@@ -9,4 +9,7 @@ build:
 test:
 	$(GO) test test/root/*
 
-.PHONY: test
+release:
+	ci/release ${REL}
+
+.PHONY: test release
