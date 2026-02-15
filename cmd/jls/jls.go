@@ -40,22 +40,19 @@ func main() {
 	if err != nil {
 		fatalf("jls: %s", err)
 	}
-	printf(header, "JID", "IP Address", "Hostname", "Path")
-	match := false
-	for _, j := range jails {
-		if jid == -1 {
-			match = true
+	jails = filter(jails, jid)
+	if len(flag.Args()) > 0 {
+		printParams(jails)
+	} else {
+		printf(header, "JID", "IP Address", "Hostname", "Path")
+		for _, j := range jails {
 			printf(row, j.ID, "", j.Hostname, j.Path)
-		} else {
-			if int32(jid) == j.ID {
-				match = true
-				printf(row, j.ID, "", j.Hostname, j.Path)
-			}
 		}
 	}
-	if !match {
-		fatalf("jls: jail \"%d\" not found", jid)
-		os.Exit(1)
+	if jid == -1 && len(jails) == 0 {
+		printf("jls: no jails found")
+	} else if len(jails) == 0 {
+		fatalf("jls: jail %d not found", jid)
 	}
 }
 
@@ -72,9 +69,41 @@ func fatalf(str string, args ...any) {
 }
 
 func usage() {
-	printf("Usage: jls [options]\n")
+	printf("Usage: jls [options] [parameter ...] \n")
 	flag.PrintDefaults()
 	os.Exit(1)
+}
+
+func filter(jails []*jail.Jail, jid int) []*jail.Jail {
+	if jid == -1 {
+		return jails
+	}
+	filtered := make([]*jail.Jail, 0, 1)
+	for _, j := range jails {
+		if j.ID == int32(jid) {
+			filtered = append(filtered, j)
+		}
+	}
+	return filtered
+}
+
+func printParams(jails []*jail.Jail) {
+	for _, param := range flag.Args() {
+		for _, j := range jails {
+			p, err := j.GetAny(param)
+			if err != nil {
+				fatalf("jls: %s", err)
+			}
+			if s, ok := p.(string); ok {
+				printf("%s ", s)
+			} else if t, ok := p.(bool); ok {
+				printf("%t ", t)
+			} else if d, ok := p.(int32); ok {
+				printf("%d ", d)
+			}
+			printf("\n")
+		}
+	}
 }
 
 func init() {
