@@ -21,4 +21,4 @@ git commit -am "${rel}"
 git tag "${rel}"
 for r in $(git remote); do
   git push ${r} $(git branch --show-current) --tags
-end
+done
