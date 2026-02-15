@@ -96,6 +96,24 @@ func TestGetInt32(t *testing.T) {
 	}
 }
 
+func TestSetName(t *testing.T) {
+	j := newJail(t)
+	defer jail.Remove(j.ID)
+	err := j.SetName("foobarbaz")
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
+func TestSetHostName(t *testing.T) {
+	j := newJail(t)
+	defer jail.Remove(j.ID)
+	err := j.SetHostname("foobarbaz.local")
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
 func TestSetSecureLevel(t *testing.T) {
 	j := newJail(t)
 	defer jail.Remove(j.ID)
