@@ -1,6 +1,8 @@
 package jail
 
 import (
+	"strings"
+
 	"golang.org/x/sys/unix"
 )
 
@@ -75,6 +77,27 @@ func (j *Jail) GetInt32(mib string) (int32, error) {
 	params.Add(mib, &i)
 	_, err := Get(params, 0)
 	return i, err
+}
+
+// Get a jail parameter (of an unknown type)
+func (j *Jail) GetAny(mib string) (any, error) {
+	var (
+		s   string
+		b   bool
+		i   int32
+		err error
+	)
+	if s, err = j.GetString(mib); err == nil {
+		return s, nil
+	}
+	isBool := strings.HasPrefix(mib, "allow.") || mib == "vnet" || mib == "dying" || mib == "persist"
+	if b, err = j.GetBool(mib); isBool && err == nil {
+		return b, nil
+	}
+	if i, err = j.GetInt32(mib); err == nil {
+		return i, nil
+	}
+	return nil, err
 }
 
 // Set an arbitrary jail param

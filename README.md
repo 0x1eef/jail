@@ -160,12 +160,13 @@ func main() {
 }
 ```
 
-**Jail.Get{Bool,String,Int32}**
+**Jail.Get{Bool,String,Int32,Any}**
 
 The [Jail struct](jail_types.go) exposes core fields and makes a best effort
 to expose additional parameters beyond that, but it cannot cover everything
 on every system. For anything not covered by the struct, then there's **GetBool**,
-**GetString**, and **GetInt32** to query a parameter directly by name:
+**GetString**, **GetInt32**, and **GetAny** to query a parameter directly
+by name:
 
 ```go
 package main
@@ -188,6 +189,46 @@ func main() {
     panic(err)
   } else {
     fmt.Printf("rules: %s\n", rules)
+  }
+}
+```
+
+**Jail.GetAny**
+
+The **GetAny** function is a more flexible version of the other Get functions.
+It returns an `any` type that can be type asserted to the correct type by
+the caller. This is useful in case the caller is unsure of the type of a
+parameter, for example when given a parameter name as an arbitrary string.
+
+Please note though that FreeBSD stores booleans as integers. So `GetAny` uses
+best-effort type detection: it first checks for string values, then checks
+known boolean parameters (`allow.*`, `vnet`, `dying`, `persist`), then falls
+back to `int32`. It's not perfect, but works most the time, and in the worst
+case a boolean may be returned as an `int32` with a value of 0 or 1:
+
+```go
+package main
+
+import (
+  "fmt"
+  "os"
+
+  "git.hardenedbsd.org/0x1eef/jail"
+)
+
+func main() {
+  j, err := jail.FindByID(1)
+  if err != nil { panic(err) }
+  p, err := j.GetAny(os.Args[1])
+  if err != nil { panic(err) }
+  if s, ok := p.(string); ok {
+    fmt.Printf("%s ", s)
+  } else if b, ok := p.(bool); ok {
+    fmt.Printf("%t ", b)
+  } else if i, ok := p.(int32); ok {
+    fmt.Printf("%d ", i)
+  } else {
+    // ????
   }
 }
 ```
