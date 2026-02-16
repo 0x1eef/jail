@@ -4,7 +4,7 @@
 <p align="center">
   <a href="https://pkg.go.dev/git.hardenedbsd.org/0x1eef/jail"><img src="https://pkg.go.dev/badge/git.hardenedbsd.org/0x1eef/jail.svg" alt="Go Reference"></a>
   <a href="https://opensource.org/license/0bsd"><img src="https://img.shields.io/badge/License-0BSD-orange.svg?" alt="License"></a>
-  <a href="https://github.com/0x1eef/jail/tags"><img src="https://img.shields.io/badge/version-0.1.1-green.svg?" alt="Version"></a>
+  <a href="https://github.com/0x1eef/jail/tags"><img src="https://img.shields.io/badge/version-0.1.2-green.svg?" alt="Version"></a>
 </p>
 
 ## About
