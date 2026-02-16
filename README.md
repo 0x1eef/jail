@@ -4,7 +4,7 @@
 <p align="center">
   <a href="https://godoc.org/github.com/0x1eef/jail"><img src="https://godoc.org/github.com/0x1eef/jail?status.svg" alt="GoDoc"></a>
   <a href="https://opensource.org/license/0bsd"><img src="https://img.shields.io/badge/License-0BSD-orange.svg?" alt="License"></a>
-  <a href="https://github.com/0x1eef/jail/releases"><img src="https://img.shields.io/badge/version-0.1.1-green.svg?" alt="Version"></a>
+  <a href="https://github.com/0x1eef/jail/tags"><img src="https://img.shields.io/badge/version-0.1.1-green.svg?" alt="Version"></a>
 </p>
 
 ## About
