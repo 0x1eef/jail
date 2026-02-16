@@ -52,13 +52,6 @@ func (p Params) Add(k string, v any) error {
 	return fmt.Errorf("key of %q already set with value of %v", k, p[k])
 }
 
-// Validate is used to make sure that the params assigned
-// are indeed correct and usable. This has been exposed for
-// a caller to do validation as well as the package interally.
-func (p Params) Validate() error {
-	return nil
-}
-
 // buildIovec takes the containing map value and builds
 // out a slice of syscall.Iovec.
 func (p Params) buildIovec() ([]unix.Iovec, []any, error) {
