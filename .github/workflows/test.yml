@@ -27,3 +27,18 @@ jobs:
           run: |
             REL=15.0 ci/bootstrap
             make test
+
+  H16:
+    runs-on: ubuntu-latest
+    steps:
+      uses: actions/checkout@v4
+    - name: Jail
+      uses: 0x1eef/hardenedbsd-vm@v1
+      with:
+        release: '16-CURRENT'
+        run: |
+          mdo -u root pkg-static install -y go curl unzip
+          curl https://github.com/HardenedBSD/hardenedBSD/archive/refs/heads/hardened/current/master.zip -o base.zip
+          unzip base.zip -d /tmp/jail
+          rm base.zip
+          mdo -u make test
