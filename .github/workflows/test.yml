@@ -1,10 +1,6 @@
 name: jail
 on:
   push:
-  pull_request:
-    branches:
-      - master
-      - main
 
 jobs:
   F14:
