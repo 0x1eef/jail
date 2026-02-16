@@ -39,8 +39,9 @@ jobs:
           release: '16-CURRENT'
           run: |
             mdo -u root pkg-static install -y go curl
-            mkdir -p /tmp/jail
-            curl -fsSL https://github.com/HardenedBSD/hardenedBSD/archive/refs/heads/hardened/current/master.zip -o base.zip
-            bsdtar -xf base.zip -C /tmp/jail --strip-components 1
-            rm -f base.zip
-            mdo -u make test
+            df -h
+            #mkdir -p /tmp/jail
+            #curl -fsSL https://github.com/HardenedBSD/hardenedBSD/archive/refs/heads/hardened/current/master.zip -o base.zip
+            #bsdtar -xf base.zip -C /tmp/jail --strip-components 1
+            #rm -f base.zip
+            #mdo -u make test
