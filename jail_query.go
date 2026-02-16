@@ -167,22 +167,20 @@ func All() ([]*Jail, error) {
 // Returns all known jail IDs (both living and dying)
 func AllByID() ([]int32, error) {
 	var (
-		jids    []int32
-		jid     int32 = 0
-		lastjid int32 = 0
+		jids []int32
+		jid  int32
+		err  error
 	)
 	for {
 		params := NewParams()
-		params.Add("jid", &jid)
-		params.Add("lastjid", &lastjid)
-		if _, err := Get(params, 0); err != nil {
+		params.Add("lastjid", jid)
+		if jid, err = Get(params, 0); err != nil {
 			if errors.Is(err, unix.ENOENT) {
 				return jids, nil
 			}
 			return jids, err
 		}
 		jids = append(jids, jid)
-		lastjid = jid
 	}
 }
 
