@@ -40,14 +40,11 @@ func main() {
 	if err != nil {
 		fatalf("jls: %s", err)
 	}
-	jails = filter(jails, jid)
+	jails = filterByJID(jails, jid)
 	if len(flag.Args()) > 0 {
-		printParams(jails)
+		printJailParams(jails)
 	} else {
-		printf(header, "JID", "IP Address", "Hostname", "Path")
-		for _, j := range jails {
-			printf(row, j.ID, "", j.Hostname, j.Path)
-		}
+		printJailTable(jails)
 	}
 	if jid == -1 && len(jails) == 0 {
 		printf("jls: no jails found")
@@ -74,20 +71,8 @@ func usage() {
 	os.Exit(1)
 }
 
-func filter(jails []*jail.Jail, jid int) []*jail.Jail {
-	if jid == -1 {
-		return jails
-	}
-	filtered := make([]*jail.Jail, 0, 1)
-	for _, j := range jails {
-		if j.ID == int32(jid) {
-			filtered = append(filtered, j)
-		}
-	}
-	return filtered
-}
-
-func printParams(jails []*jail.Jail) {
+// Prints param values
+func printJailParams(jails []*jail.Jail) {
 	for _, param := range flag.Args() {
 		for _, j := range jails {
 			p, err := j.GetAny(param)
@@ -104,6 +89,27 @@ func printParams(jails []*jail.Jail) {
 			printf("\n")
 		}
 	}
+}
+
+// Prints a table of jails
+func printJailTable(jails []*jail.Jail) {
+	printf(header, "JID", "IP Address", "Hostname", "Path")
+	for _, j := range jails {
+		printf(row, j.ID, "", j.Hostname, j.Path)
+	}
+}
+
+func filterByJID(jails []*jail.Jail, jid int) []*jail.Jail {
+	if jid == -1 {
+		return jails
+	}
+	filtered := make([]*jail.Jail, 0, 1)
+	for _, j := range jails {
+		if j.ID == int32(jid) {
+			filtered = append(filtered, j)
+		}
+	}
+	return filtered
 }
 
 func init() {
