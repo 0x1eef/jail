@@ -2,7 +2,7 @@
   <a href="jail"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi39c9ab6rTHulzqrvy45M_omMN8cUyRxfaAph0UhlpubhMxgnJVyOEarYGmHNZgt1uUZmO8cobmrloSiAfxUjgjNOVvRZrF9n9b5tO0S-sG7e9DHfalqyYQZm6aY1jV55IzPbGPA/s1600/freebsd_jail.png" width="200" height="200" border="0" alt="jail"></a>
 </p>
 <p align="center">
-  <a href="https://godoc.org/github.com/0x1eef/jail"><img src="https://godoc.org/github.com/0x1eef/jail?status.svg" alt="GoDoc"></a>
+  <a href="https://pkg.go.dev/git.hardenedbsd.org/0x1eef/jail"><img src="https://pkg.go.dev/badge/git.hardenedbsd.org/0x1eef/jail.svg" alt="Go Reference"></a>
   <a href="https://opensource.org/license/0bsd"><img src="https://img.shields.io/badge/License-0BSD-orange.svg?" alt="License"></a>
   <a href="https://github.com/0x1eef/jail/tags"><img src="https://img.shields.io/badge/version-0.1.1-green.svg?" alt="Version"></a>
 </p>

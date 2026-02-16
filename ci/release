@@ -5,6 +5,7 @@ set -e
 # variables
 #
 rel="${1}"
+GOPROXY="https://proxy.golang.org"
 
 #
 # Guards
@@ -20,5 +21,6 @@ fi
 git commit -am "${rel}"
 git tag "${rel}"
 for r in $(git remote); do
-  git push ${r} $(git branch --show-current) --tags
+  git push "${r}" "$(git branch --show-current)" --tags
 done
+go list -m git.hardenedbsd.org/0x1eef/jail@"${rel}"
