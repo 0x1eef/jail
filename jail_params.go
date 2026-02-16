@@ -16,18 +16,6 @@ const (
 	JailParamSys    = 0x80
 )
 
-// JailParam
-// TODO(briandowns) add more as they are identified.
-type JailParam struct {
-	Name       string
-	Value      any
-	ValueLen   int
-	ElemLen    int
-	CtlType    int
-	StructType int
-	Flags      int
-}
-
 // Params contains the individual settings passed in to either get
 // or set a jail.
 type Params map[string]any
