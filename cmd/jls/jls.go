@@ -71,7 +71,6 @@ func usage() {
 	os.Exit(1)
 }
 
-// Prints param values
 func printJailParams(jails []*jail.Jail) {
 	for _, param := range flag.Args() {
 		for _, j := range jails {
@@ -91,7 +90,6 @@ func printJailParams(jails []*jail.Jail) {
 	}
 }
 
-// Prints a table of jails
 func printJailTable(jails []*jail.Jail) {
 	printf(header, "JID", "IP Address", "Hostname", "Path")
 	for _, j := range jails {
