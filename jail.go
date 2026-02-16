@@ -27,6 +27,7 @@
 
 // build +FreeBSD
 
-// Package jail provides the ability to lock a process
-// or Goroutine into a FreeBSD jail.
+// Package jail provides a Go library that can manage FreeBSD jails
+// through low-level system calls that are exposed through a high-level
+// Go interface.
 package jail
