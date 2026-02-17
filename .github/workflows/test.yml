@@ -45,4 +45,4 @@ jobs:
             curl -fsSL https://github.com/HardenedBSD/hardenedBSD/archive/refs/heads/hardened/current/master.zip -o /tmp/base.zip
             bsdtar -xf /tmp/base.zip -C /tmp/jail --strip-components 1
             rm /tmp/base.zip
-            mdo -u make test
+            mdo -u root make test
