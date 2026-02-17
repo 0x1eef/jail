@@ -1,0 +1,36 @@
+#!/bin/sh
+set -ex
+
+#
+# functions
+#
+get_link()
+{
+  local rel
+  rel="${1}"
+  echo "https://download.freebsd.org/releases/amd64/${rel}-RELEASE/base.txz"
+}
+
+extract()
+{
+  local tar dir
+  tar="${1}"
+  dir="${2}"
+  tar -xpf "${tar}" -C "${dir}"
+}
+
+#
+# globals
+#
+link="$(get_link ${REL:-15.0})"
+base="$(basename "${link}")"
+dest="/tmp/jail"
+pkgs="curl go125"
+
+#
+# main
+#
+pkg install -y ${pkgs}
+curl "${link}" -o "${base}"
+mkdir -p "${dest}"
+extract "${base}" "${dest}"

@@ -1,5 +1,5 @@
 #!/bin/sh
-set -e
+set -ex
 
 #
 # functions
@@ -8,7 +8,7 @@ get_link()
 {
   local rel
   rel="${1}"
-  echo "https://download.freebsd.org/releases/amd64/${rel}-RELEASE/base.txz"
+  echo "https://installers.hardenedbsd.org/pub/${rel}/amd64/amd64/installer/LATEST/base.txz"
 }
 
 extract()
@@ -16,21 +16,22 @@ extract()
   local tar dir
   tar="${1}"
   dir="${2}"
-  tar -xpf "${tar}" -C "${dir}"
+  mdo -u root tar -xpf "${tar}" -C "${dir}"
 }
 
 #
 # globals
 #
-link="$(get_link ${REL:-15.0})"
+link="$(get_link ${REL:-current})"
 base="$(basename "${link}")"
 dest="/tmp/jail"
-pkgs="curl go"
+pkgs="curl go125"
 
 #
 # main
 #
-pkg install -y ${pkgs}
+mdo -u root pkg-static install -y ${pkgs}
 curl "${link}" -o "${base}"
 mkdir -p "${dest}"
 extract "${base}" "${dest}"
+

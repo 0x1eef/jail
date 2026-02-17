@@ -13,8 +13,8 @@ jobs:
           release: "14.3"
           copyback: false
           run: |
-            REL=14.3 ci/bootstrap
-            make test
+            REL=14.3 ci/bootstrap-fbsd
+            GO=go125 make test
 
   F15:
     runs-on: ubuntu-latest
@@ -26,23 +26,17 @@ jobs:
           release: "15.0"
           copyback: false
           run: |
-            REL=15.0 ci/bootstrap
-            make test
+            REL=15.0 ci/bootstrap-fbsd
+            GO=go125 make test
 
   H16:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Host disk usage
-        run: df -h
       - name: Jail
         uses: 0x1eef/hardenedbsd-vm@v1
         with:
           release: '16-CURRENT'
           run: |
-            mdo -u root pkg-static install -y go curl
-            mkdir -p /tmp/jail
-            curl -fsSL https://github.com/HardenedBSD/hardenedBSD/archive/refs/heads/hardened/current/master.zip -o /tmp/base.zip
-            bsdtar -xf /tmp/base.zip -C /tmp/jail --strip-components 1
-            rm /tmp/base.zip
-            mdo -u root make test
+            REL=current ci/bootstrap-hbsd
+            GO=go125 mdo -u root make test
