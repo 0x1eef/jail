@@ -16,7 +16,7 @@ extract()
   local tar dir
   tar="${1}"
   dir="${2}"
-  tar -xpf "${tar}" -C "${dir}"
+  mdo -u root tar -xpf "${tar}" -C "${dir}"
 }
 
 #
