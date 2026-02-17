@@ -30,7 +30,7 @@ pkgs="curl go"
 #
 # main
 #
-pkg install -y ${pkgs}
+mdo -u root pkg-static install -y ${pkgs}
 curl "${link}" -o "${base}"
 mkdir -p "${dest}"
 extract "${base}" "${dest}"
