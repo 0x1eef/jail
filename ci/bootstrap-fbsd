@@ -25,7 +25,7 @@ extract()
 link="$(get_link ${REL:-15.0})"
 base="$(basename "${link}")"
 dest="/tmp/jail"
-pkgs="curl go"
+pkgs="curl go125"
 
 #
 # main
